@@ -101,19 +101,30 @@ public class GeoWaveBasicIT extends
 								TEST_DATA_ZIP_RESOURCE_PATH).toURI()),
 				TEST_CASE_BASE);
 	}
+	
+	@Test
+	public void testMultiThreadedIngestAndQuerySpatialPointsAndLines() {
+		testIngestAndQuerySpatialPointsAndLines(4);	
+	}
 
 	@Test
-	public void testIngestAndQuerySpatialPointsAndLines() {
+	public void testSingleThreadedIngestAndQuerySpatialPointsAndLines() {
+		testIngestAndQuerySpatialPointsAndLines(1);
+	}
+
+	public void testIngestAndQuerySpatialPointsAndLines(int nthreads) {
 		System.getProperties().put(
 				"AccumuloIndexWriter.skipFlush",
 				"true");
 		// ingest both lines and points
 		testLocalIngest(
 				DimensionalityType.SPATIAL,
-				HAIL_SHAPEFILE_FILE);
+				HAIL_SHAPEFILE_FILE,
+				nthreads);
 		testLocalIngest(
 				DimensionalityType.SPATIAL,
-				TORNADO_TRACKS_SHAPEFILE_FILE);
+				TORNADO_TRACKS_SHAPEFILE_FILE,
+				nthreads);
 
 		try {
 			testQuery(
@@ -410,10 +421,12 @@ public class GeoWaveBasicIT extends
 		// ingest both lines and points
 		testLocalIngest(
 				DimensionalityType.SPATIAL_TEMPORAL,
-				HAIL_SHAPEFILE_FILE);
+				HAIL_SHAPEFILE_FILE,
+				1);
 		testLocalIngest(
 				DimensionalityType.SPATIAL_TEMPORAL,
-				TORNADO_TRACKS_SHAPEFILE_FILE);
+				TORNADO_TRACKS_SHAPEFILE_FILE,
+				1);
 		try {
 			testQuery(
 					new File(

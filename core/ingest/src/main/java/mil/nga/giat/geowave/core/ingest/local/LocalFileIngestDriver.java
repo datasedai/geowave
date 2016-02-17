@@ -126,11 +126,27 @@ public class LocalFileIngestDriver extends
 			final LocalFileIngestPlugin<?> plugin,
 			final IngestRunData ingestRunData )
 			throws IOException {
-		IngestUtils.ingest(
-				file,
-				ingestOptions,
-				plugin,
-				plugin,
-				ingestRunData);
+		if (localInput.getThreads() > 1) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Using single threaded ingest (num threads = %d)", localInput.getThreads()));				
+			}
+			MultiThreadedLocalIngestUtils.ingest(file, 
+					ingestOptions, 
+					plugin, 
+					plugin, 
+					ingestRunData,
+					localInput.getThreads());
+		}
+		else {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Using single threaded ingest (num threads = 1)");				
+			}
+			IngestUtils.ingest(
+					file,
+					ingestOptions,
+					plugin,
+					plugin,
+					ingestRunData);
+		}
 	}
 }
