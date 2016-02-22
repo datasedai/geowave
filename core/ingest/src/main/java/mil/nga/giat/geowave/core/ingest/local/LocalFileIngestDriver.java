@@ -7,12 +7,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import mil.nga.giat.geowave.core.cli.CommandLineResult;
 import mil.nga.giat.geowave.core.cli.DataStoreCommandLineOptions;
 import mil.nga.giat.geowave.core.ingest.IngestCommandLineOptions;
 import mil.nga.giat.geowave.core.ingest.IngestFormatPluginProviderSpi;
 import mil.nga.giat.geowave.core.ingest.IngestUtils;
+import mil.nga.giat.geowave.core.ingest.local.threaded.IngestEntryWorker;
+import mil.nga.giat.geowave.core.ingest.local.threaded.MultiThreadedIngestPlugin;
 import mil.nga.giat.geowave.core.store.DataStore;
 import mil.nga.giat.geowave.core.store.adapter.WritableDataAdapter;
 
@@ -20,6 +27,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+
+import kafka.log.Log;
 
 /**
  * This extends the local file driver to directly ingest data into GeoWave
@@ -31,6 +40,7 @@ public class LocalFileIngestDriver extends
 	private final static Logger LOGGER = Logger.getLogger(LocalFileIngestDriver.class);
 	protected DataStoreCommandLineOptions dataStoreOptions;
 	protected IngestCommandLineOptions ingestOptions;
+	protected ExecutorService ingestExecutor;
 
 	public LocalFileIngestDriver(
 			final String operation ) {
@@ -106,6 +116,9 @@ public class LocalFileIngestDriver extends
 				adapters,
 				dataStore,
 				args)) {
+
+			startExecutor();
+
 			processInput(
 					localFileIngestPlugins,
 					runData);
@@ -116,7 +129,39 @@ public class LocalFileIngestDriver extends
 					e);
 			return false;
 		}
+		finally {
+			shutdownExecutor();
+		}
 		return true;
+	}
+
+	protected void startExecutor() {
+
+		BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(
+				localInput.getThreadsTotal());
+
+		ingestExecutor = new ThreadPoolExecutor(
+				1,
+				localInput.getThreadsTotal(),
+				30,
+				TimeUnit.SECONDS,
+				blockingQueue,
+				new ThreadPoolExecutor.CallerRunsPolicy());
+
+	}
+
+	protected void shutdownExecutor() {
+		ingestExecutor.shutdown();
+		try {
+			while (!ingestExecutor.awaitTermination(
+					10,
+					TimeUnit.SECONDS)) {
+				LOGGER.debug("Awaiting completion of threads.");
+			}
+		}
+		catch (InterruptedException e) {
+			LOGGER.error("Failed to terminate executor service");
+		}
 	}
 
 	@Override
@@ -126,27 +171,20 @@ public class LocalFileIngestDriver extends
 			final LocalFileIngestPlugin<?> plugin,
 			final IngestRunData ingestRunData )
 			throws IOException {
-		if (localInput.getThreads() > 1) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(String.format("Using single threaded ingest (num threads = %d)", localInput.getThreads()));				
-			}
-			MultiThreadedLocalIngestUtils.ingest(file, 
-					ingestOptions, 
-					plugin, 
-					plugin, 
-					ingestRunData,
-					localInput.getThreads());
-		}
-		else {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Using single threaded ingest (num threads = 1)");				
-			}
-			IngestUtils.ingest(
-					file,
-					ingestOptions,
-					plugin,
-					plugin,
-					ingestRunData);
+
+		// Create the multi-thread plugin
+		MultiThreadedIngestPlugin<?, ?> wrapperPlugin = MultiThreadedIngestPlugin.wrap(
+				file,
+				plugin,
+				plugin,
+				ingestRunData,
+				ingestOptions,
+				localInput.getBatchSize());
+
+		for (int i = 0; i < localInput.getThreadsPerFile(); i++) {
+			IngestEntryWorker<?> worker = IngestEntryWorker.create(wrapperPlugin);
+			LOGGER.info("Adding worker for plugin");
+			ingestExecutor.submit(worker);
 		}
 	}
 }

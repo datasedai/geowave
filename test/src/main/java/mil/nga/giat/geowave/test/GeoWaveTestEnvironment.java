@@ -115,12 +115,12 @@ abstract public class GeoWaveTestEnvironment
 	protected void testLocalIngest(
 			final DimensionalityType dimensionalityType,
 			final String ingestFilePath,
-			final int nthreads) {
+			final int nthreads ) {
 		// ingest a shapefile (geotools type) directly into GeoWave using the
 		// ingest framework's main method and pre-defined commandline arguments
 		String threadExtra = "";
 		if (nthreads > 1) {
-			threadExtra = "-t " + nthreads + " ";
+			threadExtra = "-tt " + nthreads + " ";
 		}
 		LOGGER.warn("Ingesting '" + ingestFilePath + "' - this may take several minutes...");
 		final String[] args = StringUtils.split(

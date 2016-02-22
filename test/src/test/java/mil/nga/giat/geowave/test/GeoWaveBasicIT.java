@@ -101,10 +101,10 @@ public class GeoWaveBasicIT extends
 								TEST_DATA_ZIP_RESOURCE_PATH).toURI()),
 				TEST_CASE_BASE);
 	}
-	
+
 	@Test
 	public void testMultiThreadedIngestAndQuerySpatialPointsAndLines() {
-		testIngestAndQuerySpatialPointsAndLines(4);	
+		testIngestAndQuerySpatialPointsAndLines(4);
 	}
 
 	@Test
@@ -112,7 +112,8 @@ public class GeoWaveBasicIT extends
 		testIngestAndQuerySpatialPointsAndLines(1);
 	}
 
-	public void testIngestAndQuerySpatialPointsAndLines(int nthreads) {
+	public void testIngestAndQuerySpatialPointsAndLines(
+			int nthreads ) {
 		System.getProperties().put(
 				"AccumuloIndexWriter.skipFlush",
 				"true");
