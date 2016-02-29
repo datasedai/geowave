@@ -41,6 +41,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.util.VersionInfo;
 import org.apache.hadoop.util.VersionUtil;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -120,7 +121,7 @@ abstract public class GeoWaveTestEnvironment
 		// ingest framework's main method and pre-defined commandline arguments
 		String threadExtra = "";
 		if (nthreads > 1) {
-			threadExtra = "-tt " + nthreads + " ";
+			threadExtra = "-t " + nthreads + " ";
 		}
 		LOGGER.warn("Ingesting '" + ingestFilePath + "' - this may take several minutes...");
 		final String[] args = StringUtils.split(

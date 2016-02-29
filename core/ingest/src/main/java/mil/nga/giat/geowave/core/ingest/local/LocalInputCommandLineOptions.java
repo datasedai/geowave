@@ -18,37 +18,23 @@ public class LocalInputCommandLineOptions
 	private final static Logger LOGGER = Logger.getLogger(LocalInputCommandLineOptions.class);
 	private final String input;
 	private final String[] extensions;
-	private final int threadsTotal;
-	private final int threadsPerFile;
-	private final int batchSize;
+	private final int threads;
 
 	public LocalInputCommandLineOptions(
 			final String input,
 			final String[] extensions,
-			final int threadsTotal,
-			final int threadsPerFile,
-			final int batchSize ) {
+			final int threads) {
 		this.input = input;
 		this.extensions = extensions;
-		this.threadsTotal = threadsTotal;
-		this.threadsPerFile = threadsPerFile;
-		this.batchSize = batchSize;
+		this.threads = threads;
 	}
 
 	public String getInput() {
 		return input;
 	}
 
-	public int getThreadsTotal() {
-		return threadsTotal;
-	}
-
-	public int getThreadsPerFile() {
-		return threadsPerFile;
-	}
-
-	public int getBatchSize() {
-		return batchSize;
+	public int getThreads() {
+		return threads;
 	}
 
 	public String[] getExtensions() {
@@ -58,51 +44,18 @@ public class LocalInputCommandLineOptions
 	public static LocalInputCommandLineOptions parseOptions(
 			final CommandLine commandLine )
 			throws ParseException {
-		int threadsTotal = 1;
-		if (commandLine.hasOption("tt")) {
+		int threads = 1;
+		if (commandLine.hasOption("t")) {
 			try {
-				threadsTotal = Integer.parseInt(commandLine.getOptionValue("tt"));
-				if (threadsTotal < 1) {
+				threads = Integer.parseInt(commandLine.getOptionValue("t"));
+				if (threads < 1) {
 					throw new ParseException(
-							"Invalid total threads input");
+							"Invalid threads input");
 				}
 			}
 			catch (final Exception ex) {
 				LOGGER.warn(
-						"Error parsing total threads argument, ignoring total threads option",
-						ex);
-			}
-		}
-		int threadsPerFile = threadsTotal;
-		if (commandLine.hasOption("tpf")) {
-			try {
-				threadsPerFile = Integer.parseInt(commandLine.getOptionValue("tpf"));
-				if (threadsPerFile < 1) {
-					throw new ParseException(
-							"Invalid threads per file input");
-				}
-				if (threadsPerFile > threadsTotal) {
-					threadsPerFile = threadsTotal;
-				}
-			}
-			catch (final Exception ex) {
-				LOGGER.warn(
-						"Error parsing threads per file argument, ignoring threads per file option",
-						ex);
-			}
-		}
-		int batchSize = 500;
-		if (commandLine.hasOption("bs")) {
-			try {
-				batchSize = Integer.parseInt(commandLine.getOptionValue("bs"));
-				if (batchSize < 1) {
-					throw new ParseException(
-							"Invalid batch size input");
-				}
-			}
-			catch (final Exception ex) {
-				LOGGER.warn(
-						"Error parsing batch size argument, ignoring batch size option",
+						"Error parsing threads argument, ignoring threads option",
 						ex);
 			}
 		}
@@ -132,9 +85,7 @@ public class LocalInputCommandLineOptions
 		return new LocalInputCommandLineOptions(
 				value,
 				extensions,
-				threadsTotal,
-				threadsPerFile,
-				batchSize);
+				threads);
 	}
 
 	public static void applyOptions(
@@ -152,22 +103,10 @@ public class LocalInputCommandLineOptions
 				"individual or comma-delimited set of file extensions to accept (optional)");
 
 		allOptions.addOption(
-				"tt",
-				"total-threads",
+				"t",
+				"threads",
 				true,
-				"number of total threads to use for ingest, default to 1 (optional)");
-
-		allOptions.addOption(
-				"tpf",
-				"threads-per-file",
-				true,
-				"number of threads to use for ingest for each file, default to 'total-threads' (optional)");
-
-		allOptions.addOption(
-				"bs",
-				"batch-size",
-				true,
-				"total entries to read from source before writing (optional)");
+				"number of threads to use for ingest, default to 1 (optional)");
 
 	}
 }
