@@ -51,9 +51,13 @@ public class IngestTask implements Runnable {
 		try {
 			LOGGER.debug("Worker executing for plugin");
 
-			while (!isTerminated) {
+			while (true) {
 				GeoWaveData<?> geowaveData = readQueue.poll(100, TimeUnit.MILLISECONDS);
 				if (geowaveData == null) {
+					if (isTerminated) {
+						// Done!
+						break;
+					}
 					// Didn't receive an item.  Make sure we haven't been terminated.
 					continue;
 				}
@@ -89,6 +93,7 @@ public class IngestTask implements Runnable {
 		} catch (Exception e) {
 			// This should really never happen, because we don't limit the amount of items
 			// in the IndexWriter pool.
+			LOGGER.error("Fatal error occured while trying to get an index writer.", e);
 			throw new RuntimeException("Fatal error occured while trying to get an index writer.", e);
 		}
 		finally {
@@ -101,6 +106,8 @@ public class IngestTask implements Runnable {
 					LOGGER.warn(String.format("Could not return index writer: [%s]", writerEntry.getKey()), e);
 				}
 			}
+			
+			LOGGER.debug("Worker exited for plugin");
 		}
 	}
 	

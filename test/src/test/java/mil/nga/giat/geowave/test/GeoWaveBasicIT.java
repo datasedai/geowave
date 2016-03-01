@@ -16,6 +16,7 @@ import java.util.Map;
 
 import mil.nga.giat.geowave.adapter.vector.FeatureDataAdapter;
 import mil.nga.giat.geowave.adapter.vector.stats.FeatureBoundingBoxStatistics;
+import mil.nga.giat.geowave.adapter.vector.stats.FeatureNumericRangeStatistics;
 import mil.nga.giat.geowave.core.geotime.GeometryUtils;
 import mil.nga.giat.geowave.core.geotime.store.query.SpatialQuery;
 import mil.nga.giat.geowave.core.geotime.store.statistics.BoundingBoxDataStatistics;
@@ -29,6 +30,7 @@ import mil.nga.giat.geowave.core.store.IngestCallback;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.DataAdapter;
 import mil.nga.giat.geowave.core.store.adapter.WritableDataAdapter;
+import mil.nga.giat.geowave.core.store.adapter.statistics.CountDataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.RowRangeHistogramStatistics;
@@ -187,7 +189,8 @@ public class GeoWaveBasicIT extends
 						new File(
 								TORNADO_TRACKS_SHAPEFILE_FILE)
 					},
-					DEFAULT_SPATIAL_INDEX);
+					DEFAULT_SPATIAL_INDEX,
+					true);
 		}
 		catch (final Exception e) {
 			e.printStackTrace();
@@ -282,7 +285,10 @@ public class GeoWaveBasicIT extends
 
 	public void testStats(
 			final File[] inputFiles,
-			final PrimaryIndex index ) {
+			final PrimaryIndex index,
+			final boolean multithreaded) {
+		// In the multithreaded case, only test min/max and count.  Stats will be ingested
+		// in a different order and will not match.		
 		final LocalFileIngestPlugin<SimpleFeature> localFileIngest = new GeoToolsVectorDataStoreIngestPlugin(
 				Filter.INCLUDE);
 		final Map<ByteArrayId, StatisticsCache> statsCache = new HashMap<ByteArrayId, StatisticsCache>();
@@ -364,6 +370,16 @@ public class GeoWaveBasicIT extends
 					final DataStatistics<?> actualStats = statsStore.getDataStatistics(
 							expectedStat.getDataAdapterId(),
 							expectedStat.getStatisticsId());
+					
+					// Only test RANGE and COUNT in the multithreaded case.  None of the other
+					// statistics will match!
+					if (multithreaded) {
+						if (!(expectedStat.getStatisticsId().getString().startsWith(FeatureNumericRangeStatistics.STATS_TYPE + "#")
+								|| expectedStat.getStatisticsId().equals(CountDataStatistics.STATS_ID))) {
+							continue;
+						}
+					}
+					
 					Assert.assertNotNull(actualStats);
 					// if the stats are the same, their binary serialization
 					// should be the same
@@ -485,7 +501,8 @@ public class GeoWaveBasicIT extends
 						new File(
 								TORNADO_TRACKS_SHAPEFILE_FILE)
 					},
-					DEFAULT_SPATIAL_TEMPORAL_INDEX);
+					DEFAULT_SPATIAL_TEMPORAL_INDEX,
+					false);
 		}
 		catch (final Exception e) {
 			e.printStackTrace();
