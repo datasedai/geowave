@@ -101,10 +101,16 @@ public class OperationParser
 			params.getCommander().parse(
 					params.getArgs());
 
-			if (!prepare(params)) {
-				return;
-			}
-
+			// Prepare stage:
+			for (Operation operation : params.getOperationMap().values()) {
+				// Do not continue
+				if (!operation.prepare(params)) {
+					// This tricks GeoWaveMain to not show help.
+					params.setCommandPresent(true);
+					return;
+				}
+			}			
+			
 			// Parse with validation
 			PrefixedJCommander finalCommander = new PrefixedJCommander();
 			finalCommander.setInitializer(new OperationContext(
@@ -162,25 +168,6 @@ public class OperationParser
 		}
 
 		return params;
-	}
-
-	/**
-	 * Build an operation map and prepare each operation.
-	 * 
-	 * @param params
-	 * @return whether we prepared successfully.
-	 */
-	private boolean prepare(
-			CommandLineOperationParams params ) {
-		// Prepare stage:
-		for (Operation operation : params.getOperationMap().values()) {
-			// Do not continue
-			if (!operation.prepare(params)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public Set<Object> getAdditionalObjects() {

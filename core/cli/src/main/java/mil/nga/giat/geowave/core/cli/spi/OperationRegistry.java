@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import mil.nga.giat.geowave.core.cli.CLIOperationProviderSpi;
 import mil.nga.giat.geowave.core.cli.api.Operation;
 
 /**
