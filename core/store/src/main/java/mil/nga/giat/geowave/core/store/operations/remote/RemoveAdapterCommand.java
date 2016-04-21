@@ -23,7 +23,7 @@ import mil.nga.giat.geowave.core.store.query.AdapterIdQuery;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 
 @GeowaveOperation(name = "rmadapter", parentOperation = RemoteSection.class)
-@Parameters(commandDescription = "Remove an adapter from the remote store and all associated data for the adapter")
+@Parameters(hidden = true, commandDescription = "Remove an adapter from the remote store and all associated data for the adapter")
 public class RemoveAdapterCommand extends
 		DefaultOperation implements
 		Command
