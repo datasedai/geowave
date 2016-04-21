@@ -123,8 +123,8 @@ public class HelpCommand implements
 					else {
 						builder.append("      <no description>\n");
 					}
+					builder.append("\n");
 				}
-				builder.append("\n");
 			}
 		}
 

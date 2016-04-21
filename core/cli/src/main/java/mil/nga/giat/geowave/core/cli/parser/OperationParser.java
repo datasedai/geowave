@@ -105,12 +105,11 @@ public class OperationParser
 			for (Operation operation : params.getOperationMap().values()) {
 				// Do not continue
 				if (!operation.prepare(params)) {
-					// This tricks GeoWaveMain to not show help.
-					params.setCommandPresent(true);
+					params.setSuccessCode(1);
 					return;
 				}
-			}			
-			
+			}
+
 			// Parse with validation
 			PrefixedJCommander finalCommander = new PrefixedJCommander();
 			finalCommander.setInitializer(new OperationContext(

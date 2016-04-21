@@ -84,10 +84,6 @@ public class CommandLineOperationParams implements
 	public boolean isCommandPresent() {
 		return commandPresent;
 	}
-	
-	public void setCommandPresent(boolean commandPresent) {
-		this.commandPresent = commandPresent;
-	}
 
 	public int getSuccessCode() {
 		return successCode;
