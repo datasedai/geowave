@@ -39,7 +39,7 @@ public class AccumuloRequiredOptions extends
 	@Parameter(names = {
 		"-p",
 		"--" + PASSWORD_CONFIG_KEY
-	}, description = "The password for the user (specify -p only, you will be prompted for password)", required = true, password = true)
+	}, description = "The password for the user", required = true)
 	private String password;
 
 	@ParametersDelegate

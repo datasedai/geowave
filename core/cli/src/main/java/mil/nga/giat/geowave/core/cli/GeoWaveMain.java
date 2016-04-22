@@ -97,7 +97,7 @@ public class GeoWaveMain
 	 * @return
 	 */
 	private static OperationRegistry prepRegistry() {
-		OperationRegistry registry = new OperationRegistry();
+		OperationRegistry registry = OperationRegistry.getInstance();
 
 		OperationEntry explainCommand = registry.getOperation(ExplainCommand.class);
 		OperationEntry helpCommand = registry.getOperation(HelpCommand.class);

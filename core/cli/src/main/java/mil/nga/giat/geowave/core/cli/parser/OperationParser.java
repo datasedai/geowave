@@ -25,7 +25,7 @@ public class OperationParser
 
 	public OperationParser() {
 		this(
-				new OperationRegistry());
+				OperationRegistry.getInstance());
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class OperationParser
 		}
 		catch (ParameterException p) {
 			params.setSuccessCode(-1);
-			params.setSuccessMessage(p.getMessage());
+			params.setSuccessMessage("Error: " + p.getMessage());
 			params.setSuccessException(p);
 		}
 
@@ -162,7 +162,7 @@ public class OperationParser
 		}
 		catch (ParameterException p) {
 			params.setSuccessCode(-1);
-			params.setSuccessMessage(p.getMessage());
+			params.setSuccessMessage("Error: " + p.getMessage());
 			params.setSuccessException(p);
 		}
 
