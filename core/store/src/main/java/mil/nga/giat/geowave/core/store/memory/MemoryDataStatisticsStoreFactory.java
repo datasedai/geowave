@@ -3,13 +3,11 @@ package mil.nga.giat.geowave.core.store.memory;
 import java.util.HashMap;
 import java.util.Map;
 
-import mil.nga.giat.geowave.core.store.GenericStoreFactory;
 import mil.nga.giat.geowave.core.store.StoreFactoryOptions;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 
 public class MemoryDataStatisticsStoreFactory extends
-		AbstractMemoryStoreFactory<DataStatisticsStore> implements
-		GenericStoreFactory<DataStatisticsStore>
+		AbstractMemoryStoreFactory<DataStatisticsStore>
 {
 	private static final Map<String, DataStatisticsStore> STATISTICS_STORE_CACHE = new HashMap<String, DataStatisticsStore>();
 
