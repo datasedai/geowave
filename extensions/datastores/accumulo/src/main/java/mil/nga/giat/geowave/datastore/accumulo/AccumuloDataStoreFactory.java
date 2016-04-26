@@ -1,7 +1,7 @@
 package mil.nga.giat.geowave.datastore.accumulo;
 
 import mil.nga.giat.geowave.core.store.DataStore;
-import mil.nga.giat.geowave.core.store.DataStoreFactorySpi;
+import mil.nga.giat.geowave.core.store.GenericStoreFactory;
 import mil.nga.giat.geowave.core.store.StoreFactoryOptions;
 import mil.nga.giat.geowave.datastore.accumulo.index.secondary.AccumuloSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterIndexMappingStore;
@@ -13,7 +13,7 @@ import mil.nga.giat.geowave.datastore.accumulo.operations.config.AccumuloRequire
 
 public class AccumuloDataStoreFactory extends
 		AbstractAccumuloStoreFactory<DataStore> implements
-		DataStoreFactorySpi
+		GenericStoreFactory<DataStore>
 {
 
 	@Override
