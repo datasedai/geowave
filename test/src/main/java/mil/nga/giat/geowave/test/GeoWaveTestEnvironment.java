@@ -17,6 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.minicluster.MemoryUnit;
+import org.apache.accumulo.minicluster.ServerType;
 import org.apache.accumulo.minicluster.impl.MiniAccumuloClusterImpl;
 import org.apache.accumulo.minicluster.impl.MiniAccumuloConfigImpl;
 import org.apache.commons.io.FileUtils;
@@ -216,6 +218,7 @@ abstract public class GeoWaveTestEnvironment
 								TEMP_DIR,
 								DEFAULT_MINI_ACCUMULO_PASSWORD);
 						config.setNumTservers(2);
+						config.setMemory(ServerType.TABLET_SERVER, 4, MemoryUnit.GIGABYTE);
 
 						miniAccumulo = MiniAccumuloClusterFactory.newAccumuloCluster(
 								config,
