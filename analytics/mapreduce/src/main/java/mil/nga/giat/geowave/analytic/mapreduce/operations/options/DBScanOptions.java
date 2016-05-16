@@ -2,6 +2,7 @@ package mil.nga.giat.geowave.analytic.mapreduce.operations.options;
 
 import com.beust.jcommander.Parameter;
 
+import mil.nga.giat.geowave.analytic.nn.NNProcessor;
 import mil.nga.giat.geowave.analytic.param.ClusteringParameters;
 import mil.nga.giat.geowave.analytic.param.GlobalParameters;
 import mil.nga.giat.geowave.analytic.param.HullParameters;
@@ -18,11 +19,13 @@ import mil.nga.giat.geowave.analytic.param.annotations.PartitionParameter;
 public class DBScanOptions
 {
 
+	// Partitioning prevents N^2 operations when looking for neighbors
+
 	@PartitionParameter(PartitionParameters.Partition.DISTANCE_THRESHOLDS)
 	@Parameter(names = {
 		"-pdt",
 		"--partitionDistanceThresholds"
-	}, description = "Comma separated list of distance thresholds, per dimension")
+	}, description = "Comma separated list of distance thresholds, per dimension [defaults to --partitionMaxDistance]")
 	private String partitioningDistanceThresholds;
 
 	@PartitionParameter(PartitionParameters.Partition.GEOMETRIC_DISTANCE_UNIT)
@@ -30,42 +33,35 @@ public class DBScanOptions
 		"-pdu",
 		"--partitionGeometricDistanceUnit"
 	}, description = "Geometric distance unit (m=meters,km=kilometers, see symbols for javax.units.BaseUnit)")
-	private String partitioningGeometricDistanceUnit;
+	private String partitioningGeometricDistanceUnit = "m";
 
 	@ClusteringParameter(ClusteringParameters.Clustering.MAX_ITERATIONS)
 	@Parameter(names = {
 		"-cmi",
 		"--clusteringMaxIterations"
 	}, description = "Maximum number of iterations when finding optimal clusters")
-	private String clusteringMaxIterations;
+	private String clusteringMaxIterations = "15";
 
 	@ClusteringParameter(ClusteringParameters.Clustering.MINIMUM_SIZE)
 	@Parameter(names = {
 		"-cms",
 		"--clusteringMinimumSize"
-	}, description = "Minimum Cluster Size")
+	}, required = true, description = "Minimum points needed to create a cluster")
 	private String clusteringMinimumSize;
 
 	@GlobalParameter(GlobalParameters.Global.BATCH_ID)
 	@Parameter(names = {
 		"-b",
 		"--globalBatchId"
-	}, description = "Batch ID")
+	}, description = "Batch ID (defaults to UUID, can be used to distinguish results while querying across multiple runs)")
 	private String globalBatchId;
 
 	@HullParameter(HullParameters.Hull.DATA_TYPE_ID)
 	@Parameter(names = {
 		"-hdt",
-		"--hullDataTypeId"
-	}, description = "Data Type ID for a centroid item")
-	private String hullDataTypeId;
-
-	@HullParameter(HullParameters.Hull.HULL_BUILDER)
-	@Parameter(names = {
-		"-hhb",
-		"--hullHullBuilder"
-	}, description = "Hull Builder")
-	private String hullHullBuilder;
+		"--hullAdapterId"
+	}, description = "Intermediate Adapter ID for concave hull (will not be automatically deleted)")
+	private String hullDataTypeId = "concave_hull";
 
 	@HullParameter(HullParameters.Hull.PROJECTION_CLASS)
 	@Parameter(names = {
@@ -78,77 +74,71 @@ public class DBScanOptions
 	@Parameter(names = {
 		"-conf",
 		"--mapReduceConfigFile"
-	}, description = "MapReduce Configuration")
+	}, description = "MapReduce Configuration (Hadoop XML file configuration)")
 	private String mapReduceConfigFile;
 
 	@MapReduceParameter(MapReduceParameters.MRConfig.HDFS_BASE_DIR)
 	@Parameter(names = {
 		"-hdfsbase",
 		"--mapReduceHdfsBaseDir"
-	}, description = "Fully qualified path to the base directory in hdfs")
+	}, required = true, description = "Fully qualified path to the base directory in hdfs (for temporary files, automatically cleaned up)")
 	private String mapReduceHdfsBaseDir;
-
-	@OutputParameter(OutputParameters.Output.HDFS_OUTPUT_PATH)
-	@Parameter(names = {
-		"-oop",
-		"--outputHdfsOutputPath"
-	}, description = "Output HDFS File Path when used with a sequence file")
-	private String outputHdfsOutputPath;
 
 	@MapReduceParameter(MapReduceParameters.MRConfig.HDFS_HOST_PORT)
 	@Parameter(names = {
 		"-hdfs",
 		"--mapReduceHdfsHostPort"
-	}, description = "HDFS hostname and port in the format hostname:port")
+	}, description = "[REQUIRED if not in config file] HDFS hostname and port in the format hostname:port")
 	private String mapReduceHdfsHostPort;
 
 	@MapReduceParameter(MapReduceParameters.MRConfig.JOBTRACKER_HOST_PORT)
 	@Parameter(names = {
 		"-jobtracker",
 		"--mapReduceJobtrackerHostPort"
-	}, description = "Hadoop job tracker hostname and port in the format hostname:port")
+	}, description = "[REQUIRED if -resourceman is unset] Hadoop job tracker hostname and port in the format hostname:port")
 	private String mapReduceJobtrackerHostPort;
 
 	@MapReduceParameter(MapReduceParameters.MRConfig.YARN_RESOURCE_MANAGER)
 	@Parameter(names = {
 		"-resourceman",
 		"--mapReduceYarnResourceManager"
-	}, description = "Yarn resource manager hostname and port in the format hostname:port")
+	}, description = "[REQUIRED if -jobtracker is unset] Yarn resource manager hostname and port in the format hostname:port")
 	private String mapReduceYarnResourceManager;
 
 	@OutputParameter(OutputParameters.Output.DATA_NAMESPACE_URI)
 	@Parameter(names = {
 		"-ons",
 		"--outputDataNamespaceUri"
-	}, description = "Output namespace for objects that will be written to GeoWave")
+	}, description = "Output feature namespace for objects that will be written to GeoWave")
 	private String outputDataNamespaceUri;
 
 	@OutputParameter(OutputParameters.Output.DATA_TYPE_ID)
 	@Parameter(names = {
 		"-odt",
-		"--outputDataTypeId"
-	}, description = "Output Data ID assigned to objects that will be written to GeoWave")
+		"--outputAdapterId"
+	}, required = true, description = "Output Adapter Id assigned to objects that will be written to GeoWave")
 	private String outputDataTypeId;
 
+	// TODO: If you don't want to be named SPATIAL_IDX
 	@OutputParameter(OutputParameters.Output.INDEX_ID)
 	@Parameter(names = {
 		"-oid",
 		"--outputIndexId"
-	}, description = "Output Index ID for objects that will be written to GeoWave")
+	}, description = "Output Index ID for objects that will be written to GeoWave (default to SPATIAL_IDX)")
 	private String outputIndexId;
 
 	@PartitionParameter(PartitionParameters.Partition.MAX_MEMBER_SELECTION)
 	@Parameter(names = {
 		"-pms",
 		"--partitionMaxMemberSelection"
-	}, description = "Maximum number of members selected from a partition")
-	private String partitionMaxMemberSelection;
+	}, description = "Maximum number of members selected from a partition (max num of neighbors to allow)")
+	private String partitionMaxMemberSelection = String.valueOf(NNProcessor.DEFAULT_UPPER_BOUND_PARTIION_SIZE);
 
 	@PartitionParameter(PartitionParameters.Partition.PARTITIONER_CLASS)
 	@Parameter(names = {
 		"-pc",
 		"--partitionPartitionerClass"
-	}, description = "Index Identifier for Centroids")
+	}, description = "Index Identifier for Centroids [defaults to OrthodromicDistancePartitioner]")
 	private String partitionPartitionerClass;
 
 	@PartitionParameter(PartitionParameters.Partition.PARTITION_DECREASE_RATE)
@@ -156,13 +146,13 @@ public class DBScanOptions
 		"-pdr",
 		"--partitionPartitionDecreaseRate"
 	}, description = "Rate of decrease for precision(within (0,1])")
-	private String partitionPartitionDecreaseRate;
+	private String partitionPartitionDecreaseRate = "0.15";
 
 	@PartitionParameter(PartitionParameters.Partition.MAX_DISTANCE)
 	@Parameter(names = {
 		"-pmd",
 		"--partitionMaxDistance"
-	}, description = "Maximum Partition Distance")
+	}, required = true, description = "Maximum Partition Distance")
 	private String partitionPartitionDistance;
 
 	@PartitionParameter(PartitionParameters.Partition.PARTITION_PRECISION)
@@ -170,14 +160,7 @@ public class DBScanOptions
 		"-pp",
 		"--partitionPartitionPrecision"
 	}, description = "Partition Precision")
-	private String partitionPartitionPrecision;
-
-	@PartitionParameter(PartitionParameters.Partition.SECONDARY_PARTITIONER_CLASS)
-	@Parameter(names = {
-		"-psp",
-		"--partitionSecondaryPartitionerClass"
-	}, description = "Perform secondary partitioning with the provided class")
-	private String partitionSecondaryPartitionerClass;
+	private String partitionPartitionPrecision = "1.0";
 
 	public String getPartitioningDistanceThresholds() {
 		return partitioningDistanceThresholds;
@@ -231,15 +214,6 @@ public class DBScanOptions
 	public void setHullDataTypeId(
 			String hullDataTypeId ) {
 		this.hullDataTypeId = hullDataTypeId;
-	}
-
-	public String getHullHullBuilder() {
-		return hullHullBuilder;
-	}
-
-	public void setHullHullBuilder(
-			String hullHullBuilder ) {
-		this.hullHullBuilder = hullHullBuilder;
 	}
 
 	public String getHullProjectionClass() {
@@ -366,23 +340,5 @@ public class DBScanOptions
 	public void setPartitionPartitionPrecision(
 			String partitionPartitionPrecision ) {
 		this.partitionPartitionPrecision = partitionPartitionPrecision;
-	}
-
-	public String getPartitionSecondaryPartitionerClass() {
-		return partitionSecondaryPartitionerClass;
-	}
-
-	public void setPartitionSecondaryPartitionerClass(
-			String partitionSecondaryPartitionerClass ) {
-		this.partitionSecondaryPartitionerClass = partitionSecondaryPartitionerClass;
-	}
-
-	public String getOutputHdfsOutputPath() {
-		return outputHdfsOutputPath;
-	}
-
-	public void setOutputHdfsOutputPath(
-			String outputHdfsOutputPath ) {
-		this.outputHdfsOutputPath = outputHdfsOutputPath;
 	}
 }

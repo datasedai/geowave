@@ -49,11 +49,6 @@ public class HullParameters
 				"hi",
 				"The iteration of the hull calculation",
 				true),
-		HULL_BUILDER(
-				Projection.class,
-				"hhb",
-				"Hull Builder",
-				true),
 		ZOOM_LEVEL(
 				Integer.class,
 				"hzl",
