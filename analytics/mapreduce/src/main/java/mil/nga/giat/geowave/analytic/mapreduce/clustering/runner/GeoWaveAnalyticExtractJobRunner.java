@@ -185,7 +185,7 @@ public class GeoWaveAnalyticExtractJobRunner extends
 		}
 		setMinInputSplits(runTimeProperties.getPropertyAsInt(
 				ExtractParameters.Extract.MIN_INPUT_SPLIT,
-				1));
+				100));
 		setMaxInputSplits(runTimeProperties.getPropertyAsInt(
 				ExtractParameters.Extract.MAX_INPUT_SPLIT,
 				10000));

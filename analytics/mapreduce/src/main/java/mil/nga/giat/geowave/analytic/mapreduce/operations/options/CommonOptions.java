@@ -5,10 +5,11 @@ import com.beust.jcommander.ParametersDelegate;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import mil.nga.giat.geowave.analytic.mapreduce.GeoWaveInputFormatConfiguration;
 import mil.nga.giat.geowave.analytic.param.CommonParameters;
 import mil.nga.giat.geowave.analytic.param.ExtractParameters;
-import mil.nga.giat.geowave.analytic.param.OutputParameters;
 import mil.nga.giat.geowave.analytic.param.InputParameters;
+import mil.nga.giat.geowave.analytic.param.OutputParameters;
 import mil.nga.giat.geowave.analytic.param.annotations.CommonParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.ExtractParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.InputParameter;
@@ -35,15 +36,15 @@ public class CommonOptions
 	@Parameter(names = {
 		"-emx",
 		"--extractMaxInputSplit"
-	}, description = "Maximum input split size")
-	private String extractMaxInputSplit;
+	}, description = "Maximum input split size (Hadoop Input Split)")
+	private String extractMaxInputSplit = "10000";
 
 	@ExtractParameter(ExtractParameters.Extract.MIN_INPUT_SPLIT)
 	@Parameter(names = {
 		"-emn",
 		"--extractMinInputSplit"
-	}, description = "Minimum input split size")
-	private String extractMinInputSplit;
+	}, description = "Minimum input split size (Hadoop Input Split)")
+	private String extractMinInputSplit = "100";
 
 	@ExtractParameter(ExtractParameters.Extract.QUERY)
 	@Parameter(names = {
@@ -52,33 +53,27 @@ public class CommonOptions
 	}, description = "Query")
 	private String extractQuery;
 
-	@OutputParameter(OutputParameters.Output.OUTPUT_FORMAT)
-	@Parameter(names = {
-		"-ofc",
-		"--outputOutputFormat"
-	}, description = "Output Format Class")
-	private String outputOutputFormat;
-
 	@InputParameter(InputParameters.Input.INPUT_FORMAT)
 	@Parameter(names = {
 		"-ifc",
 		"--inputFormatClass"
-	}, description = "Input Format Class")
-	private String inputFormatClass;
+	}, hidden = true, description = "Input Format Class (Hadoop InputFormat Implementation)")
+	private String inputFormatClass = GeoWaveInputFormatConfiguration.class.getName();
 
 	@InputParameter(InputParameters.Input.HDFS_INPUT_PATH)
 	@Parameter(names = {
 		"-iip",
 		"--inputHdfsPath"
-	}, description = "Input Path")
+	}, hidden = true, description = "Input Path (only used if SequenceFileInputConfiguration is used)")
 	private String inputHdfsPath;
 
+	// TODO: Need to Re-visit this variable. Description is really confusing!
 	@OutputParameter(OutputParameters.Output.REDUCER_COUNT)
 	@Parameter(names = {
 		"-orc",
 		"--outputReducerCount"
 	}, description = "Number of Reducers For Output")
-	private String outputReducerCount;
+	private String outputReducerCount = "16";
 
 	public String getCommonDistanceFunctionClass() {
 		return commonDistanceFunctionClass;
@@ -123,15 +118,6 @@ public class CommonOptions
 	public void setExtractQuery(
 			String extractQuery ) {
 		this.extractQuery = extractQuery;
-	}
-
-	public String getOutputOutputFormat() {
-		return outputOutputFormat;
-	}
-
-	public void setOutputOutputFormat(
-			String outputOutputFormat ) {
-		this.outputOutputFormat = outputOutputFormat;
 	}
 
 	public String getOutputReducerCount() {

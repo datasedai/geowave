@@ -9,6 +9,7 @@ import mil.nga.giat.geowave.analytic.param.ExtractParameters;
 import mil.nga.giat.geowave.analytic.param.GlobalParameters;
 import mil.nga.giat.geowave.analytic.param.HullParameters;
 import mil.nga.giat.geowave.analytic.param.MapReduceParameters;
+import mil.nga.giat.geowave.analytic.param.OutputParameters;
 import mil.nga.giat.geowave.analytic.param.SampleParameters;
 import mil.nga.giat.geowave.analytic.param.annotations.CentroidParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.ClusteringParameter;
@@ -17,6 +18,7 @@ import mil.nga.giat.geowave.analytic.param.annotations.ExtractParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.GlobalParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.HullParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.MapReduceParameter;
+import mil.nga.giat.geowave.analytic.param.annotations.OutputParameter;
 import mil.nga.giat.geowave.analytic.param.annotations.SampleParameter;
 
 public class KMeansCommonOptions
@@ -223,6 +225,13 @@ public class KMeansCommonOptions
 		"--sampleSampleIterations"
 	}, description = "Minimum number of sample iterations")
 	private String sampleSampleIterations;
+
+	@OutputParameter(OutputParameters.Output.OUTPUT_FORMAT)
+	@Parameter(names = {
+		"-ofc",
+		"--outputOutputFormat"
+	}, description = "Output Format Class")
+	private String outputOutputFormat;
 
 	public String getCentroidExtractorClass() {
 		return centroidExtractorClass;
@@ -483,5 +492,14 @@ public class KMeansCommonOptions
 	public void setSampleSampleIterations(
 			String sampleSampleIterations ) {
 		this.sampleSampleIterations = sampleSampleIterations;
+	}
+
+	public String getOutputOutputFormat() {
+		return outputOutputFormat;
+	}
+
+	public void setOutputOutputFormat(
+			String outputOutputFormat ) {
+		this.outputOutputFormat = outputOutputFormat;
 	}
 }

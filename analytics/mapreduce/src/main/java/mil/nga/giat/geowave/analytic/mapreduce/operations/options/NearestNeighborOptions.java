@@ -82,6 +82,13 @@ public class NearestNeighborOptions
 	}, description = "Perform secondary partitioning with the provided class")
 	private String partitionSecondaryPartitionerClass;
 
+	@OutputParameter(OutputParameters.Output.OUTPUT_FORMAT)
+	@Parameter(names = {
+		"-ofc",
+		"--outputOutputFormat"
+	}, description = "Output Format Class")
+	private String outputOutputFormat;
+
 	public String getOutputHdfsOutputPath() {
 		return outputHdfsOutputPath;
 	}
@@ -172,4 +179,12 @@ public class NearestNeighborOptions
 		this.mapReduceHdfsBaseDir = mapReduceHdfsBaseDir;
 	}
 
+	public String getOutputOutputFormat() {
+		return outputOutputFormat;
+	}
+
+	public void setOutputOutputFormat(
+			String outputOutputFormat ) {
+		this.outputOutputFormat = outputOutputFormat;
+	}
 }
