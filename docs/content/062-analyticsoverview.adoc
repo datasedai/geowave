@@ -57,9 +57,16 @@ mvn package -P analytics-singlejar -Dfindbugs.skip=true -Dformatter.skip=true -D
 
 === Running
 
-The 'singlejar' jar file is located in the analytics/mapreduce/target/munged.   The jar is executed by Yarn.
+The 'singlejar' jar file is located in the analytics/mapreduce/target/munged.   The jar is executed by Yarn.  Note, this file might not have the accumulo dependencies you need
+to execute analytics.  In that case, you can use the normal tools jar.
+
+The following assumes you have created a store named 'my_store' with accumulo connection parameters.
 
 [source, bash]
 ----
-yarn jar geowave-analytic-mapreduce-0.8.8-SNAPSHOT-analytics-singlejar.jar  -dbscan  -n rwgdrummer.gpx -u rwgdrummer -p rwgdrummer -z zookeeper-master:2181 -i accumulo -emn 2 -emx 6 -pd 1000 -pc mil.nga.giat.geowave.analytic.partitioner.OrthodromicDistancePartitioner -cms 10 -orc 4 -hdfsbase /user/rwgdrummer -b bdb4 -eit gpxpoint
+yarn jar geowave-analytic-mapreduce-0.9.1-analytics-singlejar.jar analytic dbscan -cms 10 -emn 2 -emx 6 -pmd 1000 -orc 4 -hdfsbase /user/rwgdrummer --query.adapters gpxpoint my_store
 ----
+
+The above command will execute DBSCAN.  The max distance between points is 10 meters, min hdfs input split is 2, max hdfs input split is 6, max search distance is 1000 meters, 
+reducer count is 4, the temporary files needed by this job are stored in /user/rwgdrummer, and the data executed against DBSCAN is 'gpxpoint'.  The accumulo connection
+parameters are loaded from my_store.

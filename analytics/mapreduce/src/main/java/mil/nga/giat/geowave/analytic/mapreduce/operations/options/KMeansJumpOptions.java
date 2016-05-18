@@ -14,28 +14,28 @@ public class KMeansJumpOptions
 	@Parameter(names = {
 		"-jkp",
 		"--jumpKplusplusMin"
-	}, description = "The minimum k when K means ++ takes over sampling.")
+	}, required = true, description = "The minimum k when K means ++ takes over sampling.")
 	private String jumpKplusplusMin;
 
 	@JumpParameter(JumpParameters.Jump.RANGE_OF_CENTROIDS)
 	@Parameter(names = {
 		"-jrc",
 		"--jumpRangeOfCentroids"
-	}, description = "Comma-separated range of centroids (e.g. 2,100)")
+	}, required = true, description = "Comma-separated range of centroids (e.g. 2,100)")
 	private String jumpRangeOfCentroids;
 
 	@SampleParameter(SampleParameters.Sample.SAMPLE_RANK_FUNCTION)
 	@Parameter(names = {
 		"-srf",
 		"--sampleSampleRankFunction"
-	}, description = "The rank function used when sampling the first N highest rank items.")
+	}, hidden = true, description = "The rank function used when sampling the first N highest rank items.")
 	private String sampleSampleRankFunction;
 
 	@SampleParameter(SampleParameters.Sample.SAMPLE_SIZE)
 	@Parameter(names = {
 		"-sss",
 		"--sampleSampleSize"
-	}, description = "Sample Size")
+	}, hidden = true, description = "Sample Size")
 	private String sampleSampleSize;
 
 	public String getJumpKplusplusMin() {

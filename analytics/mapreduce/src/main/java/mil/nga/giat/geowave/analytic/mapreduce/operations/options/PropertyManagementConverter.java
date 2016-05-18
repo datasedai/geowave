@@ -2,6 +2,9 @@ package mil.nga.giat.geowave.analytic.mapreduce.operations.options;
 
 import java.lang.reflect.AnnotatedElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import mil.nga.giat.geowave.analytic.PropertyManagement;
 import mil.nga.giat.geowave.analytic.param.ParameterEnum;
 import mil.nga.giat.geowave.analytic.param.annotations.CentroidParameter;
@@ -26,7 +29,8 @@ import mil.nga.giat.geowave.core.cli.prefix.TranslationEntry;
  */
 public class PropertyManagementConverter
 {
-
+	final static Logger LOGGER = LoggerFactory.getLogger(PropertyManagementConverter.class);
+	
 	final PropertyManagement properties;
 
 	public PropertyManagementConverter(
@@ -138,13 +142,19 @@ public class PropertyManagementConverter
 	@SuppressWarnings("unchecked")
 	private void handleEnum(
 			TranslationEntry entry,
-			ParameterEnum<?> enumVal ) {
+			ParameterEnum<?>[] enumVals ) {
 		Object value = entry.getParam().get(
 				entry.getObject());
 		if (value != null) {
-			((ParameterEnum<Object>) enumVal).getHelper().setValue(
-					properties,
-					value);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(
+						String.format("Analytic Property Value: %s = %s", entry.getAsPropertyName(), value.toString()));
+			}
+			for (ParameterEnum<?> enumVal : enumVals) {
+				((ParameterEnum<Object>) enumVal).getHelper().setValue(
+						properties,
+						value);
+			}
 		}
 	}
 }
