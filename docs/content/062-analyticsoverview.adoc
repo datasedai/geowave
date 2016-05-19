@@ -37,36 +37,14 @@ A infrastructure component that produces all the neighbors of a feature within a
 
 === Building
 
-First build the main project, specifying the dependency versions.
-
-[source, bash]
-----
-export BUILD_ARGS="-Daccumulo.version=1.6.0-cdh5.1.4 -Dhadoop.version=2.6.0-cdh5.4.0 -Dgeotools.version=13.0 -Dgeoserver.version=2.7.0 -Dvendor.version=cdh5 -Daccumulo.api=1.6 -P cloudera"
-git clone https://github.com/ngageoint/geowave.git
-cd geowave
-mvn install -Dfindbugs.skip=true -Dformatter.skip=true -DskipITs=true -DskipTests=true $BUILD_ARGS
-----
-
-Next, build the analytics tool framework.
-
-[source, bash]
-----
-cd analytics/mapreduce
-mvn package -P analytics-singlejar -Dfindbugs.skip=true -Dformatter.skip=true -DskipITs=true -DskipTests=true $BUILD_ARGS
-----
+Build the geowave tools project, as explained in the "Tools -> Building" section.
 
 === Running
 
-The 'singlejar' jar file is located in the analytics/mapreduce/target/munged.   The jar is executed by Yarn.  Note, this file might not have the accumulo dependencies you need
-to execute analytics.  In that case, you can use the normal tools jar.
-
-The following assumes you have created a store named 'my_store' with accumulo connection parameters.
-
 [source, bash]
 ----
-yarn jar geowave-analytic-mapreduce-0.9.1-analytics-singlejar.jar analytic dbscan -cms 10 -emn 2 -emx 6 -pmd 1000 -orc 4 -hdfsbase /user/rwgdrummer --query.adapters gpxpoint my_store
+yarn jar geowave-tools.jar analytic <algorithm> <options> <store>
 ----
 
-The above command will execute DBSCAN.  The max distance between points is 10 meters, min hdfs input split is 2, max hdfs input split is 6, max search distance is 1000 meters, 
-reducer count is 4, the temporary files needed by this job are stored in /user/rwgdrummer, and the data executed against DBSCAN is 'gpxpoint'.  The accumulo connection
-parameters are loaded from my_store.
+The above command will execute <algorithm> (such as dbscan), sourcing the data
+from the <store> datastore (see config addstore)
