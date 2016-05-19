@@ -925,8 +925,7 @@ public class PropertyManagement implements
 		public Integer convert(
 				final Serializable ob )
 				throws Exception {
-			return new Integer(
-					Integer.parseInt(ob.toString()));
+			return Integer.parseInt(ob.toString());
 		}
 
 		@Override
