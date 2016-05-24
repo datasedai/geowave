@@ -28,20 +28,7 @@
 		<dependency>
 			<groupId>org.apache.accumulo</groupId>
 			<artifactId>accumulo-minicluster</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.accumulo</groupId>
-					<artifactId>accumulo-monitor</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jersey-core</artifactId>
-					<groupId>com.sun.jersey</groupId>
-				</exclusion>
-			</exclusions>
+			<scope>test</scope>
 		</dependency>
         <dependency>
             <groupId>org.apache.accumulo</groupId>
@@ -72,7 +59,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+			<version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -67,6 +67,7 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<test.args>-Xms256m -Xmx1024m -XX:MaxPermSize=256m</test.args>
+		<junit.version>4.11</junit.version>
 		<findbugs.version>3.0.1</findbugs.version>
 		<findbugs.omitVisitors>MutableStaticFields,FindReturnRef</findbugs.omitVisitors>
 		<findbugs.effort>Max</findbugs.effort>
@@ -169,6 +170,20 @@
 				<groupId>org.apache.accumulo</groupId>
 				<artifactId>accumulo-minicluster</artifactId>
 				<version>${accumulo.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.accumulo</groupId>
+						<artifactId>accumulo-monitor</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jersey-core</artifactId>
+						<groupId>com.sun.jersey</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hbase</groupId>

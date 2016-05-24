@@ -12,6 +12,7 @@
 			<groupId>mil.nga.giat</groupId>
 			<artifactId>geowave-core-ingest</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>java3d</groupId>
@@ -22,6 +23,7 @@
 			<groupId>mil.nga.giat</groupId>
 			<artifactId>geowave-adapter-vector</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>jai_imageio</artifactId>
