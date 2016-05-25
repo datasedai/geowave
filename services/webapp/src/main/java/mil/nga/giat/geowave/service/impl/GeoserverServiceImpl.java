@@ -40,17 +40,18 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/geoserver")
 public class GeoserverServiceImpl implements
 		GeoserverService
 {
-	private final static Logger log = Logger.getLogger(GeoserverServiceImpl.class);
+	private final static Logger log = LoggerFactory.getLogger(GeoserverServiceImpl.class);
 	private final static int defaultIndentation = 2;
 
 	private final String geoserverUrl;
