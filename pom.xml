@@ -714,10 +714,10 @@
 			   Make sure you have the branch active in git you want to tag.
 			   If something goes wrong pushing, you will most likely have outstanding
 			   commits in your local repo you will have to revert/remove.
-			1. mvn release:prepare -DdryRun=true
+			1. mvn release:prepare -DdryRun=true -Dformatter.skip=true -Dfindbugs.skip=true
 			2. Inspect and ensure the correct pom.xml files will be modified
 			3. mvn release:clean
-			4. mvn release:prepare 
+			4. mvn release:prepare -Dformatter.skip=true -Dfindbugs.skip=true
 			5. mvn release:clean
 			-->
 			<plugin>
