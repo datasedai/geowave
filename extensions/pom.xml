@@ -26,5 +26,7 @@
 		<module>formats/stanag4676/service</module>
 		<module>cli/debug</module>
 		<module>cli/osm</module>
+		<module>cli/operations</module>
+		<module>cli/geoserver</module>
 	</modules>
 </project>
