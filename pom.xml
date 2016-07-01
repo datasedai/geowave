@@ -29,7 +29,7 @@
 	</distributionManagement>
 	<scm>
 		<url>https://github.com/ngageoint/geowave.git</url>
-		<connection>scm:git:git@github.com:ngageoint/geowave.git</connection>
+		<connection>scm:git:https://github.com/datasedai/geowave.git</connection>
 	</scm>
 	<properties>
 		<geotools.version>14.2</geotools.version>
