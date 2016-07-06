@@ -27,6 +27,5 @@
 		<module>cli/debug</module>
 		<module>cli/osm</module>
 		<module>cli/operations</module>
-		<module>cli/geoserver</module>
 	</modules>
 </project>
