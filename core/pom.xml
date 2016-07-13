@@ -17,5 +17,6 @@
 		<module>cli</module>
 		<module>ingest</module>
 		<module>mapreduce</module>
+		<module>planner</module>
 	</modules>
 </project>
