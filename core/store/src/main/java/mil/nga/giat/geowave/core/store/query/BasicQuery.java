@@ -16,9 +16,7 @@ import org.apache.log4j.Logger;
 import com.google.common.math.DoubleMath;
 
 import mil.nga.giat.geowave.core.index.ByteArrayId;
-import mil.nga.giat.geowave.core.index.ByteArrayRange;
 import mil.nga.giat.geowave.core.index.NumericIndexStrategy;
-import mil.nga.giat.geowave.core.index.QueryConstraints;
 import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.index.dimension.NumericDimensionDefinition;
 import mil.nga.giat.geowave.core.index.sfc.data.BasicNumericDataset;
@@ -35,7 +33,6 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.FilterableConstraints;
 import mil.nga.giat.geowave.core.store.index.Index;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
 
 /**
  * The Basic Query class represent a hyper-cube(s) query across all dimensions
@@ -645,18 +642,7 @@ public class BasicQuery implements
 	@Override
 	public boolean isSupported(
 			final Index<?, ?> index ) {
-		return (index instanceof PrimaryIndex) ? constraints.isSupported((PrimaryIndex) index)
-				: secondaryIndexSupports((SecondaryIndex) index);
-	}
-
-	public boolean secondaryIndexSupports(
-			final SecondaryIndex index ) {
-		for (final ByteArrayId id : index.getFieldIDs()) {
-			if (additionalConstraints.containsKey(id)) {
-				return true;
-			}
-		}
-		return false;
+		return constraints.isSupported((PrimaryIndex) index);
 	}
 
 	@Override
@@ -702,44 +688,6 @@ public class BasicQuery implements
 		constraints = new Constraints(
 				sets);
 		// TODO; additionalConstraints
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ByteArrayRange> getSecondaryIndexConstraints(
-			final SecondaryIndex<?> index ) {
-		final List<ByteArrayRange> allRanges = new ArrayList<>();
-		final List<FilterableConstraints> queryConstraints = getSecondaryIndexQueryConstraints(index);
-		for (final QueryConstraints queryConstraint : queryConstraints) {
-			allRanges.addAll(index.getIndexStrategy().getQueryRanges(
-					queryConstraint));
-		}
-		return allRanges;
-	}
-
-	@Override
-	public List<DistributableQueryFilter> getSecondaryQueryFilter(
-			final SecondaryIndex<?> index ) {
-		final List<DistributableQueryFilter> allFilters = new ArrayList<>();
-		final List<FilterableConstraints> queryConstraints = getSecondaryIndexQueryConstraints(index);
-		for (final FilterableConstraints queryConstraint : queryConstraints) {
-			final DistributableQueryFilter filter = queryConstraint.getFilter();
-			if (filter != null) {
-				allFilters.add(filter);
-			}
-		}
-		return allFilters;
-	}
-
-	public List<FilterableConstraints> getSecondaryIndexQueryConstraints(
-			final SecondaryIndex<?> index ) {
-		final List<FilterableConstraints> constraints = new ArrayList<>();
-		for (final ByteArrayId id : index.getFieldIDs()) {
-			if (additionalConstraints.get(id) != null) {
-				constraints.add(additionalConstraints.get(id));
-			}
-		}
-		return constraints;
 	}
 
 	public boolean isExact() {

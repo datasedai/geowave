@@ -11,7 +11,6 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 
 /**
  * This is a convenience class which sets up some obvious values in the
@@ -93,10 +92,6 @@ public class StoreLoader
 
 	public DataStatisticsStore createDataStatisticsStore() {
 		return dataStorePlugin.createDataStatisticsStore();
-	}
-
-	public SecondaryIndexDataStore createSecondaryIndexStore() {
-		return dataStorePlugin.createSecondaryIndexStore();
 	}
 
 	public AdapterIndexMappingStore createAdapterIndexMappingStore() {

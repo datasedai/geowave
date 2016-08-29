@@ -7,8 +7,6 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
-import mil.nga.giat.geowave.datastore.hbase.index.secondary.HBaseSecondaryIndexDataStoreFactory;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseAdapterIndexMappingStoreFactory;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseAdapterStoreFactory;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseDataStatisticsStoreFactory;
@@ -36,11 +34,6 @@ public class HBaseStoreFactoryFamily extends
 	@Override
 	public GenericStoreFactory<AdapterStore> getAdapterStoreFactory() {
 		return new HBaseAdapterStoreFactory();
-	}
-
-	@Override
-	public GenericStoreFactory<SecondaryIndexDataStore> getSecondaryIndexDataStore() {
-		return new HBaseSecondaryIndexDataStoreFactory();
 	}
 
 	@Override

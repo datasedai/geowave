@@ -21,7 +21,6 @@ import mil.nga.giat.geowave.core.store.CloseableIterator;
 import mil.nga.giat.geowave.core.store.CloseableIteratorWrapper;
 import mil.nga.giat.geowave.core.store.DataStoreOperations;
 import mil.nga.giat.geowave.core.store.DataStoreOptions;
-import mil.nga.giat.geowave.core.store.CloseableIterator.Empty;
 import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.DataAdapter;
@@ -33,12 +32,9 @@ import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.IngestCallbackList;
 import mil.nga.giat.geowave.core.store.callback.ScanCallback;
-import mil.nga.giat.geowave.core.store.data.visibility.UniformVisibilityWriter;
 import mil.nga.giat.geowave.core.store.filter.DedupeFilter;
-import mil.nga.giat.geowave.core.store.index.IndexMetaDataSet;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.core.store.index.writer.IndependentAdapterIndexWriter;
 import mil.nga.giat.geowave.core.store.index.writer.IndexCompositeWriter;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
@@ -59,7 +55,6 @@ public abstract class BaseDataStore
 	protected final IndexStore indexStore;
 	protected final AdapterStore adapterStore;
 	protected final DataStatisticsStore statisticsStore;
-	protected final SecondaryIndexDataStore secondaryIndexDataStore;
 	protected final AdapterIndexMappingStore indexMappingStore;
 	private final DataStoreOperations baseOperations;
 	private final DataStoreOptions baseOptions;
@@ -69,14 +64,12 @@ public abstract class BaseDataStore
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
 			final AdapterIndexMappingStore indexMappingStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final DataStoreOperations operations,
 			final DataStoreOptions options ) {
 		this.indexStore = indexStore;
 		this.adapterStore = adapterStore;
 		this.statisticsStore = statisticsStore;
 		this.indexMappingStore = indexMappingStore;
-		this.secondaryIndexDataStore = secondaryIndexDataStore;
 
 		baseOperations = operations;
 		baseOptions = options;
@@ -112,7 +105,6 @@ public abstract class BaseDataStore
 		for (final PrimaryIndex index : indices) {
 			final DataStoreCallbackManager callbackManager = new DataStoreCallbackManager(
 					statisticsStore,
-					secondaryIndexDataStore,
 					i == 0);
 
 			callbackManager.setPersistStats(baseOptions.isPersistDataStatistics());
@@ -334,7 +326,6 @@ public abstract class BaseDataStore
 				indexStore.removeAll();
 				adapterStore.removeAll();
 				statisticsStore.removeAll();
-				secondaryIndexDataStore.removeAll();
 				indexMappingStore.removeAll();
 
 				baseOperations.deleteAll();
@@ -383,7 +374,6 @@ public abstract class BaseDataStore
 
 					final DataStoreCallbackManager callbackCache = new DataStoreCallbackManager(
 							statisticsStore,
-							secondaryIndexDataStore,
 							queriedAdapters.add(adapter.getAdapterId()));
 
 					callbackCache.setPersistStats(baseOptions.isPersistDataStatistics());

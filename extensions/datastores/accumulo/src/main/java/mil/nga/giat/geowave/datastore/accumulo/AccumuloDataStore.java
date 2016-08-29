@@ -1,7 +1,6 @@
 package mil.nga.giat.geowave.datastore.accumulo;
 
 import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DuplicateEntryCount;
 import mil.nga.giat.geowave.core.store.base.BaseDataStore;
 import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo;
-import mil.nga.giat.geowave.core.store.base.Writer;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.ScanCallback;
 import mil.nga.giat.geowave.core.store.data.visibility.DifferingFieldVisibilityEntryCount;
@@ -53,13 +51,11 @@ import mil.nga.giat.geowave.core.store.filter.DedupeFilter;
 import mil.nga.giat.geowave.core.store.index.IndexMetaDataSet;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.query.DistributableQuery;
 import mil.nga.giat.geowave.core.store.query.Query;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.core.store.util.DataAdapterAndIndexCache;
-import mil.nga.giat.geowave.datastore.accumulo.index.secondary.AccumuloSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.accumulo.mapreduce.AccumuloSplitsProvider;
 import mil.nga.giat.geowave.datastore.accumulo.mapreduce.GeoWaveAccumuloRecordReader;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterIndexMappingStore;
@@ -110,8 +106,6 @@ public class AccumuloDataStore extends
 						accumuloOperations),
 				new AccumuloDataStatisticsStore(
 						accumuloOperations),
-				new AccumuloSecondaryIndexDataStore(
-						accumuloOperations),
 				new AccumuloAdapterIndexMappingStore(
 						accumuloOperations),
 				accumuloOperations);
@@ -127,9 +121,6 @@ public class AccumuloDataStore extends
 						accumuloOperations),
 				new AccumuloDataStatisticsStore(
 						accumuloOperations),
-				new AccumuloSecondaryIndexDataStore(
-						accumuloOperations,
-						accumuloOptions),
 				new AccumuloAdapterIndexMappingStore(
 						accumuloOperations),
 				accumuloOperations,
@@ -140,14 +131,12 @@ public class AccumuloDataStore extends
 			final IndexStore indexStore,
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final AdapterIndexMappingStore indexMappingStore,
 			final AccumuloOperations accumuloOperations ) {
 		this(
 				indexStore,
 				adapterStore,
 				statisticsStore,
-				secondaryIndexDataStore,
 				indexMappingStore,
 				accumuloOperations,
 				new AccumuloOptions());
@@ -157,7 +146,6 @@ public class AccumuloDataStore extends
 			final IndexStore indexStore,
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final AdapterIndexMappingStore indexMappingStore,
 			final AccumuloOperations accumuloOperations,
 			final AccumuloOptions accumuloOptions ) {
@@ -166,7 +154,6 @@ public class AccumuloDataStore extends
 				adapterStore,
 				statisticsStore,
 				indexMappingStore,
-				secondaryIndexDataStore,
 				accumuloOperations,
 				accumuloOptions);
 
@@ -299,19 +286,6 @@ public class AccumuloDataStore extends
 		public void entryIngested(
 				final DataStoreEntryInfo entryInfo,
 				final T entry ) {
-			for (final ByteArrayId primaryIndexRowId : entryInfo.getRowIds()) {
-				final ByteArrayId dataId = adapter.getDataId(entry);
-				if ((dataId != null) && (dataId.getBytes() != null) && (dataId.getBytes().length > 0)) {
-					secondaryIndexDataStore.storeJoinEntry(
-							altIndexId,
-							dataId,
-							adapter.getAdapterId(),
-							EMPTY_FIELD_ID,
-							primaryIndexId,
-							primaryIndexRowId,
-							EMPTY_VISIBILITY);
-				}
-			}
 		}
 	}
 

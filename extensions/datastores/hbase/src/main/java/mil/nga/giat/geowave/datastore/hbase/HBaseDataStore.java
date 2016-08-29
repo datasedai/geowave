@@ -42,12 +42,10 @@ import mil.nga.giat.geowave.core.store.filter.DedupeFilter;
 import mil.nga.giat.geowave.core.store.index.IndexMetaDataSet;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.query.DistributableQuery;
 import mil.nga.giat.geowave.core.store.query.Query;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
-import mil.nga.giat.geowave.datastore.hbase.index.secondary.HBaseSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.hbase.io.HBaseWriter;
 import mil.nga.giat.geowave.datastore.hbase.mapreduce.GeoWaveHBaseRecordReader;
 import mil.nga.giat.geowave.datastore.hbase.mapreduce.HBaseSplitsProvider;
@@ -91,8 +89,6 @@ public class HBaseDataStore extends
 						operations),
 				new HBaseAdapterIndexMappingStore(
 						operations),
-				new HBaseSecondaryIndexDataStore(
-						operations),
 				operations);
 	}
 
@@ -108,8 +104,6 @@ public class HBaseDataStore extends
 						operations),
 				new HBaseAdapterIndexMappingStore(
 						operations),
-				new HBaseSecondaryIndexDataStore(
-						operations),
 				operations,
 				options);
 	}
@@ -119,14 +113,12 @@ public class HBaseDataStore extends
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
 			final AdapterIndexMappingStore indexMappingStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final BasicHBaseOperations operations ) {
 		this(
 				indexStore,
 				adapterStore,
 				statisticsStore,
 				indexMappingStore,
-				secondaryIndexDataStore,
 				operations,
 				new HBaseOptions());
 	}
@@ -136,7 +128,6 @@ public class HBaseDataStore extends
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
 			final AdapterIndexMappingStore indexMappingStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final BasicHBaseOperations operations,
 			final HBaseOptions options ) {
 		super(
@@ -144,7 +135,6 @@ public class HBaseDataStore extends
 				adapterStore,
 				statisticsStore,
 				indexMappingStore,
-				secondaryIndexDataStore,
 				operations,
 				options);
 

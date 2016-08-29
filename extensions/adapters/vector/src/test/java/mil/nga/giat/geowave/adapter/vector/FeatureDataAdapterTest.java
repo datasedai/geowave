@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQLException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
@@ -30,14 +28,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import mil.nga.giat.geowave.adapter.vector.index.NumericSecondaryIndexConfiguration;
-import mil.nga.giat.geowave.adapter.vector.index.TemporalSecondaryIndexConfiguration;
-import mil.nga.giat.geowave.adapter.vector.index.TextSecondaryIndexConfiguration;
 import mil.nga.giat.geowave.adapter.vector.plugin.GeoWaveGTDataStore;
 import mil.nga.giat.geowave.adapter.vector.util.FeatureDataUtils;
 import mil.nga.giat.geowave.adapter.vector.utils.DateUtilities;
-import mil.nga.giat.geowave.adapter.vector.utils.SimpleFeatureUserDataConfiguration;
-import mil.nga.giat.geowave.adapter.vector.utils.SimpleFeatureUserDataConfigurationSet;
 import mil.nga.giat.geowave.core.geotime.ingest.SpatialDimensionalityTypeProvider;
 import mil.nga.giat.geowave.core.geotime.store.dimension.GeometryWrapper;
 import mil.nga.giat.geowave.core.store.adapter.AdapterPersistenceEncoding;
@@ -45,7 +38,6 @@ import mil.nga.giat.geowave.core.store.adapter.IndexFieldHandler;
 import mil.nga.giat.geowave.core.store.data.PersistentValue;
 import mil.nga.giat.geowave.core.store.data.visibility.GlobalVisibilityHandler;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
 
 public class FeatureDataAdapterTest
 {
@@ -469,31 +461,4 @@ public class FeatureDataAdapterTest
 				dataAdapterCopy.getType().getCoordinateReferenceSystem().getCoordinateSystem(),
 				GeoWaveGTDataStore.DEFAULT_CRS.getCoordinateSystem());
 	}
-
-	@Test
-	public void testSecondaryIndicies()
-			throws SchemaException {
-		final SimpleFeatureType sfType = DataUtilities.createType(
-				"stateCapitalData",
-				"location:Geometry," + "city:String," + "state:String," + "since:Date," + "landArea:Double,"
-						+ "munincipalPop:Integer," + "notes:String");
-		final List<SimpleFeatureUserDataConfiguration> secondaryIndexConfigs = new ArrayList<>();
-		secondaryIndexConfigs.add(new NumericSecondaryIndexConfiguration(
-				"landArea",
-				SecondaryIndexType.JOIN));
-		secondaryIndexConfigs.add(new TextSecondaryIndexConfiguration(
-				"notes",
-				SecondaryIndexType.JOIN));
-		secondaryIndexConfigs.add(new TemporalSecondaryIndexConfiguration(
-				"since",
-				SecondaryIndexType.JOIN));
-		final SimpleFeatureUserDataConfigurationSet config = new SimpleFeatureUserDataConfigurationSet(
-				sfType,
-				secondaryIndexConfigs);
-		config.updateType(sfType);
-		final FeatureDataAdapter dataAdapter = new FeatureDataAdapter(
-				sfType);
-		Assert.assertTrue(dataAdapter.getSupportedSecondaryIndices().size() == 3);
-	}
-
 }

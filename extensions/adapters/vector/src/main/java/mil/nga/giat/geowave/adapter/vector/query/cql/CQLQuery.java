@@ -22,8 +22,6 @@ import mil.nga.giat.geowave.adapter.vector.util.QueryIndexHelper;
 import mil.nga.giat.geowave.adapter.vector.utils.TimeDescriptors;
 import mil.nga.giat.geowave.core.geotime.GeometryUtils;
 import mil.nga.giat.geowave.core.geotime.GeometryUtils.GeoConstraintsWrapper;
-import mil.nga.giat.geowave.core.geotime.index.dimension.LatitudeDefinition;
-import mil.nga.giat.geowave.core.geotime.index.dimension.TimeDefinition;
 import mil.nga.giat.geowave.core.geotime.store.dimension.LatitudeField;
 import mil.nga.giat.geowave.core.geotime.store.dimension.LongitudeField;
 import mil.nga.giat.geowave.core.geotime.store.dimension.TimeField;
@@ -33,18 +31,14 @@ import mil.nga.giat.geowave.core.geotime.store.query.SpatialTemporalQuery;
 import mil.nga.giat.geowave.core.geotime.store.query.TemporalConstraints;
 import mil.nga.giat.geowave.core.geotime.store.query.TemporalConstraintsSet;
 import mil.nga.giat.geowave.core.geotime.store.query.TemporalQuery;
-import mil.nga.giat.geowave.core.index.ByteArrayRange;
 import mil.nga.giat.geowave.core.index.NumericIndexStrategy;
 import mil.nga.giat.geowave.core.index.PersistenceUtils;
-import mil.nga.giat.geowave.core.index.dimension.NumericDimensionDefinition;
 import mil.nga.giat.geowave.core.index.sfc.data.MultiDimensionalNumericData;
 import mil.nga.giat.geowave.core.store.dimension.NumericDimensionField;
-import mil.nga.giat.geowave.core.store.filter.DistributableQueryFilter;
 import mil.nga.giat.geowave.core.store.filter.QueryFilter;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.Index;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
 import mil.nga.giat.geowave.core.store.query.BasicQuery;
 import mil.nga.giat.geowave.core.store.query.BasicQuery.Constraints;
 import mil.nga.giat.geowave.core.store.query.DistributableQuery;
@@ -337,26 +331,6 @@ public class CQLQuery implements
 			// base query can be null, no reason to log a warning
 			baseQuery = null;
 		}
-	}
-
-	@Override
-	public List<ByteArrayRange> getSecondaryIndexConstraints(
-			final SecondaryIndex<?> index ) {
-		final PropertyFilterVisitor visitor = new PropertyFilterVisitor();
-		final PropertyConstraintSet constraints = (PropertyConstraintSet) cqlFilter.accept(
-				visitor,
-				null);
-		return constraints.getRangesFor(index);
-	}
-
-	@Override
-	public List<DistributableQueryFilter> getSecondaryQueryFilter(
-			final SecondaryIndex<?> index ) {
-		final PropertyFilterVisitor visitor = new PropertyFilterVisitor();
-		final PropertyConstraintSet constraints = (PropertyConstraintSet) cqlFilter.accept(
-				visitor,
-				null);
-		return constraints.getFiltersFor(index);
 	}
 
 	protected static boolean hasAtLeastSpatial(
