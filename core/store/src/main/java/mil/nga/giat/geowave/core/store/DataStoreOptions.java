@@ -3,8 +3,6 @@ package mil.nga.giat.geowave.core.store;
 public interface DataStoreOptions
 {
 
-	public boolean isUseAltIndex();
-
 	public boolean isPersistIndex();
 
 	public boolean isPersistAdapter();

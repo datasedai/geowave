@@ -455,12 +455,6 @@ public class FeatureDataAdapter extends
 			namespace = null;
 		}
 
-		// 24 bytes is the 6 four byte length fields and one byte for the
-		// version
-		final byte[] secondaryIndexBytes = new byte[bytes.length - axisBytes.length - typeNameBytes.length
-				- namespaceBytes.length - attrBytes.length - encodedTypeBytes.length - 29];
-		buf.get(secondaryIndexBytes);
-
 		final String encodedType = StringUtils.stringFromBinary(encodedTypeBytes);
 		try {
 			final SimpleFeatureType myType = FeatureDataUtils.decodeType(

@@ -113,17 +113,6 @@ public abstract class BaseDataStore
 
 			store(index);
 
-			final String indexName = index.getId().getString();
-
-			if (adapter instanceof WritableDataAdapter) {
-				if (baseOptions.isUseAltIndex()) {
-					addAltIndexCallback(
-							callbacks,
-							indexName,
-							adapter,
-							index.getId());
-				}
-			}
 			callbacks.add(callbackManager.getIngestCallback(
 					(WritableDataAdapter<T>) adapter,
 					index));
@@ -272,7 +261,6 @@ public abstract class BaseDataStore
 			final String[] authorizations,
 			final double[] maxResolutionSubsamplingPerDimension )
 			throws IOException {
-		final String altIdxTableName = index.getId().getString() + ALT_INDEX_TABLE;
 
 		MemoryAdapterStore tempAdapterStore;
 
@@ -281,40 +269,14 @@ public abstract class BaseDataStore
 					adapter
 				});
 
-		if (baseOptions.isUseAltIndex() && baseOperations.tableExists(altIdxTableName)) {
-			final List<ByteArrayId> rowIds = getAltIndexRowIds(
-					altIdxTableName,
-					dataIds,
-					adapter.getAdapterId());
-
-			if (rowIds.size() > 0) {
-
-				final QueryOptions options = new QueryOptions();
-				options.setScanCallback(callback);
-				options.setAuthorizations(authorizations);
-				options.setMaxResolutionSubsamplingPerDimension(maxResolutionSubsamplingPerDimension);
-				options.setLimit(-1);
-
-				return queryRowIds(
-						adapter,
-						index,
-						rowIds,
-						dedupeFilter,
-						options,
-						tempAdapterStore);
-			}
-		}
-		else {
-			return getEntryRows(
-					index,
-					tempAdapterStore,
-					dataIds,
-					adapter,
-					callback,
-					dedupeFilter,
-					authorizations);
-		}
-		return new CloseableIterator.Empty();
+		return getEntryRows(
+				index,
+				tempAdapterStore,
+				dataIds,
+				adapter,
+				callback,
+				dedupeFilter,
+				authorizations);
 	}
 
 	public boolean delete(
@@ -359,16 +321,10 @@ public abstract class BaseDataStore
 					continue;
 				}
 				final String indexTableName = index.getId().getString();
-				final String altIdxTableName = indexTableName + ALT_INDEX_TABLE;
 
 				final Closeable idxDeleter = createIndexDeleter(
 						indexTableName,
 						queryOptions.getAuthorizations());
-
-				final Closeable altIdxDelete = baseOptions.isUseAltIndex()
-						&& baseOperations.tableExists(altIdxTableName) ? createIndexDeleter(
-						altIdxTableName,
-						queryOptions.getAuthorizations()) : null;
 
 				for (final DataAdapter<Object> adapter : indexAdapterPair.getRight()) {
 
@@ -400,11 +356,6 @@ public abstract class BaseDataStore
 								addToBatch(
 										idxDeleter,
 										entryInfo.getRowIds());
-								if (altIdxDelete != null) {
-									addToBatch(
-											altIdxDelete,
-											Collections.singletonList(adapter.getDataId(entry)));
-								}
 							}
 							catch (final Exception e) {
 								LOGGER.error(
@@ -470,15 +421,13 @@ public abstract class BaseDataStore
 					}
 					callbackCache.close();
 				}
-				if (altIdxDelete != null) {
-					altIdxDelete.close();
-				}
 				idxDeleter.close();
 			}
 
 			return aOk.get();
 		}
 		catch (final Exception e) {
+			e.printStackTrace();
 			LOGGER.error(
 					"Failed delete operation " + query.toString(),
 					e);
@@ -493,7 +442,6 @@ public abstract class BaseDataStore
 			final String... additionalAuthorizations )
 			throws IOException {
 		final String tableName = index.getId().getString();
-		final String altIdxTableName = tableName + ALT_INDEX_TABLE;
 		final String adapterId = StringUtils.stringFromBinary(adapter.getAdapterId().getBytes());
 
 		try (final CloseableIterator<DataStatistics<?>> it = statisticsStore.getDataStatistics(adapter.getAdapterId())) {
@@ -514,12 +462,6 @@ public abstract class BaseDataStore
 				tableName,
 				adapterId,
 				additionalAuthorizations);
-		if (baseOptions.isUseAltIndex() && baseOperations.tableExists(altIdxTableName)) {
-			deleteAll(
-					altIdxTableName,
-					adapterId,
-					additionalAuthorizations);
-		}
 	}
 
 	protected abstract boolean deleteAll(
@@ -536,12 +478,6 @@ public abstract class BaseDataStore
 			String indexTableName,
 			String[] authorizations )
 			throws Exception;
-
-	protected abstract List<ByteArrayId> getAltIndexRowIds(
-			final String altIdxTableName,
-			final List<ByteArrayId> dataIds,
-			final ByteArrayId adapterId,
-			final String... authorizations );
 
 	protected abstract CloseableIterator<Object> getEntryRows(
 			final PrimaryIndex index,
@@ -574,12 +510,6 @@ public abstract class BaseDataStore
 			DedupeFilter filter,
 			QueryOptions sanitizedQueryOptions,
 			AdapterStore tempAdapterStore );
-
-	protected abstract <T> void addAltIndexCallback(
-			List<IngestCallback<T>> callbacks,
-			String indexName,
-			DataAdapter<T> adapter,
-			ByteArrayId primaryIndexId );
 
 	protected abstract IndexWriter createIndexWriter(
 			DataAdapter adapter,

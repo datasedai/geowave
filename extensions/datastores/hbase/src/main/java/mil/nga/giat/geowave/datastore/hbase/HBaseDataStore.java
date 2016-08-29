@@ -4,14 +4,11 @@
 package mil.nga.giat.geowave.datastore.hbase;
 
 import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.TableNotFoundException;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -31,11 +28,9 @@ import mil.nga.giat.geowave.core.store.DataStoreOptions;
 import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.DataAdapter;
-import mil.nga.giat.geowave.core.store.adapter.WritableDataAdapter;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DuplicateEntryCount;
 import mil.nga.giat.geowave.core.store.base.BaseDataStore;
-import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.ScanCallback;
 import mil.nga.giat.geowave.core.store.filter.DedupeFilter;
@@ -60,7 +55,6 @@ import mil.nga.giat.geowave.datastore.hbase.query.HBaseRowIdsQuery;
 import mil.nga.giat.geowave.datastore.hbase.query.HBaseRowPrefixQuery;
 import mil.nga.giat.geowave.datastore.hbase.query.SingleEntryFilter;
 import mil.nga.giat.geowave.datastore.hbase.util.HBaseEntryIteratorWrapper;
-import mil.nga.giat.geowave.datastore.hbase.util.HBaseUtils;
 import mil.nga.giat.geowave.datastore.hbase.util.HBaseUtils.MultiScannerClosableWrapper;
 import mil.nga.giat.geowave.mapreduce.MapReduceDataStore;
 import mil.nga.giat.geowave.mapreduce.input.GeoWaveInputKey;
@@ -165,26 +159,6 @@ public class HBaseDataStore extends
 	}
 
 	@Override
-	protected <T> void addAltIndexCallback(
-			final List<IngestCallback<T>> callbacks,
-			final String indexName,
-			final DataAdapter<T> adapter,
-			final ByteArrayId primaryIndexId ) {
-		try {
-			callbacks.add(new AltIndexCallback<T>(
-					indexName,
-					(WritableDataAdapter<T>) adapter,
-					options));
-
-		}
-		catch (final Exception e) {
-			LOGGER.error(
-					"Unable to create table table for alt index to  [" + indexName + "]",
-					e);
-		}
-	}
-
-	@Override
 	protected CloseableIterator<Object> getEntryRows(
 			final PrimaryIndex index,
 			final AdapterStore tempAdapterStore,
@@ -235,44 +209,6 @@ public class HBaseDataStore extends
 						iterator,
 						null,
 						scanCallback));
-	}
-
-	@Override
-	protected List<ByteArrayId> getAltIndexRowIds(
-			final String tableName,
-			final List<ByteArrayId> dataIds,
-			final ByteArrayId adapterId,
-			final String... authorizations ) {
-
-		final List<ByteArrayId> result = new ArrayList<ByteArrayId>();
-		try {
-			if (options.isUseAltIndex() && operations.tableExists(tableName)) {
-				for (final ByteArrayId dataId : dataIds) {
-					final Scan scanner = new Scan();
-					scanner.setStartRow(dataId.getBytes());
-					scanner.setStopRow(dataId.getBytes());
-					scanner.addFamily(adapterId.getBytes());
-
-					final ResultScanner results = operations.getScannedResults(
-							scanner,
-							tableName,
-							authorizations);
-					final Iterator<Result> iterator = results.iterator();
-					while (iterator.hasNext()) {
-						result.add(new ByteArrayId(
-								CellUtil.cloneQualifier(iterator.next().listCells().get(
-										0))));
-					}
-				}
-			}
-		}
-		catch (final IOException e) {
-			LOGGER.warn(
-					"Unable to query table '" + tableName + "'.  Table does not exist.",
-					e);
-		}
-
-		return result;
 	}
 
 	@Override
@@ -461,72 +397,6 @@ public class HBaseDataStore extends
 				isOutputWritable,
 				adapterStore,
 				operations);
-	}
-
-	private class AltIndexCallback<T> implements
-			IngestCallback<T>,
-			Closeable,
-			Flushable
-	{
-
-		private final WritableDataAdapter<T> adapter;
-		private HBaseWriter altIdxWriter;
-		private final String altIdxTableName;
-
-		public AltIndexCallback(
-				final String indexName,
-				final WritableDataAdapter<T> adapter,
-				final HBaseOptions hbaseOptions )
-				throws IOException {
-			this.adapter = adapter;
-			altIdxTableName = indexName + ALT_INDEX_TABLE;
-			if (operations.tableExists(indexName)) {
-				if (!operations.tableExists(altIdxTableName)) {
-					throw new TableNotFoundException(
-							altIdxTableName);
-				}
-			}
-			else {
-				// index table does not exist yet
-				if (operations.tableExists(altIdxTableName)) {
-					operations.deleteTable(altIdxTableName);
-					LOGGER.warn("Deleting current alternate index table [" + altIdxTableName
-							+ "] as main table does not yet exist.");
-				}
-			}
-
-			altIdxWriter = operations.createWriter(
-					altIdxTableName,
-					new String[] {
-						adapter.getAdapterId().getString()
-					},
-					hbaseOptions.isCreateTable());
-		}
-
-		@Override
-		public void close()
-				throws IOException {
-			altIdxWriter.close();
-			altIdxWriter = null;
-		}
-
-		@Override
-		public void entryIngested(
-				final DataStoreEntryInfo entryInfo,
-				final T entry ) {
-			HBaseUtils.writeAltIndex(
-					adapter,
-					entryInfo,
-					entry,
-					altIdxWriter);
-
-		}
-
-		@Override
-		public void flush() {
-			// HBase writer does not require/support flush
-		}
-
 	}
 
 }
