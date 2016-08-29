@@ -1,27 +1,21 @@
 package mil.nga.giat.geowave.datastore.accumulo;
 
 import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.IteratorSetting;
 import org.apache.accumulo.core.client.MutationsRejectedException;
-import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.ScannerBase;
 import org.apache.accumulo.core.client.TableNotFoundException;
-import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Range;
-import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.iterators.user.WholeRowIterator;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -39,12 +33,9 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.DataAdapter;
 import mil.nga.giat.geowave.core.store.adapter.RowMergingDataAdapter;
-import mil.nga.giat.geowave.core.store.adapter.WritableDataAdapter;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DuplicateEntryCount;
 import mil.nga.giat.geowave.core.store.base.BaseDataStore;
-import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo;
-import mil.nga.giat.geowave.core.store.base.Writer;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.ScanCallback;
 import mil.nga.giat.geowave.core.store.data.visibility.DifferingFieldVisibilityEntryCount;
@@ -53,13 +44,11 @@ import mil.nga.giat.geowave.core.store.filter.DedupeFilter;
 import mil.nga.giat.geowave.core.store.index.IndexMetaDataSet;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.query.DistributableQuery;
 import mil.nga.giat.geowave.core.store.query.Query;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.core.store.util.DataAdapterAndIndexCache;
-import mil.nga.giat.geowave.datastore.accumulo.index.secondary.AccumuloSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.accumulo.mapreduce.AccumuloSplitsProvider;
 import mil.nga.giat.geowave.datastore.accumulo.mapreduce.GeoWaveAccumuloRecordReader;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterIndexMappingStore;
@@ -110,8 +99,6 @@ public class AccumuloDataStore extends
 						accumuloOperations),
 				new AccumuloDataStatisticsStore(
 						accumuloOperations),
-				new AccumuloSecondaryIndexDataStore(
-						accumuloOperations),
 				new AccumuloAdapterIndexMappingStore(
 						accumuloOperations),
 				accumuloOperations);
@@ -127,9 +114,6 @@ public class AccumuloDataStore extends
 						accumuloOperations),
 				new AccumuloDataStatisticsStore(
 						accumuloOperations),
-				new AccumuloSecondaryIndexDataStore(
-						accumuloOperations,
-						accumuloOptions),
 				new AccumuloAdapterIndexMappingStore(
 						accumuloOperations),
 				accumuloOperations,
@@ -140,14 +124,12 @@ public class AccumuloDataStore extends
 			final IndexStore indexStore,
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final AdapterIndexMappingStore indexMappingStore,
 			final AccumuloOperations accumuloOperations ) {
 		this(
 				indexStore,
 				adapterStore,
 				statisticsStore,
-				secondaryIndexDataStore,
 				indexMappingStore,
 				accumuloOperations,
 				new AccumuloOptions());
@@ -157,7 +139,6 @@ public class AccumuloDataStore extends
 			final IndexStore indexStore,
 			final AdapterStore adapterStore,
 			final DataStatisticsStore statisticsStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final AdapterIndexMappingStore indexMappingStore,
 			final AccumuloOperations accumuloOperations,
 			final AccumuloOptions accumuloOptions ) {
@@ -166,7 +147,6 @@ public class AccumuloDataStore extends
 				adapterStore,
 				statisticsStore,
 				indexMappingStore,
-				secondaryIndexDataStore,
 				accumuloOperations,
 				accumuloOptions);
 
@@ -228,91 +208,6 @@ public class AccumuloDataStore extends
 					e);
 		}
 
-	}
-
-	@Override
-	protected <T> void addAltIndexCallback(
-			final List<IngestCallback<T>> callbacks,
-			final String indexName,
-			final DataAdapter<T> adapter,
-			final ByteArrayId primaryIndexId ) {
-		try {
-			callbacks.add(new AltIndexCallback<T>(
-					indexName,
-					(WritableDataAdapter<T>) adapter,
-					primaryIndexId));
-
-		}
-		catch (final Exception e) {
-			LOGGER.error(
-					"Unable to create table table for alt index to  [" + indexName + "]",
-					e);
-		}
-	}
-
-	private class AltIndexCallback<T> implements
-			IngestCallback<T>
-	{
-		private final ByteArrayId EMPTY_VISIBILITY = new ByteArrayId(
-				new byte[0]);
-		private final ByteArrayId EMPTY_FIELD_ID = new ByteArrayId(
-				new byte[0]);
-		private final WritableDataAdapter<T> adapter;
-		private final String altIdxTableName;
-		private final ByteArrayId primaryIndexId;
-		private final ByteArrayId altIndexId;
-
-		public AltIndexCallback(
-				final String indexName,
-				final WritableDataAdapter<T> adapter,
-				final ByteArrayId primaryIndexId )
-				throws TableNotFoundException {
-			this.adapter = adapter;
-			altIdxTableName = indexName + ALT_INDEX_TABLE;
-			altIndexId = new ByteArrayId(
-					altIdxTableName);
-			this.primaryIndexId = primaryIndexId;
-			try {
-				if (accumuloOperations.tableExists(indexName)) {
-					if (!accumuloOperations.tableExists(altIdxTableName)) {
-						throw new TableNotFoundException(
-								altIdxTableName,
-								altIdxTableName,
-								"Requested alternate index table does not exist.");
-					}
-				}
-				else {
-					// index table does not exist yet
-					if (accumuloOperations.tableExists(altIdxTableName)) {
-						accumuloOperations.deleteTable(altIdxTableName);
-						LOGGER.warn("Deleting current alternate index table [" + altIdxTableName
-								+ "] as main table does not yet exist.");
-					}
-				}
-			}
-			catch (final IOException e) {
-				LOGGER.error("Exception checking for index " + indexName + ": " + e);
-			}
-		}
-
-		@Override
-		public void entryIngested(
-				final DataStoreEntryInfo entryInfo,
-				final T entry ) {
-			for (final ByteArrayId primaryIndexRowId : entryInfo.getRowIds()) {
-				final ByteArrayId dataId = adapter.getDataId(entry);
-				if ((dataId != null) && (dataId.getBytes() != null) && (dataId.getBytes().length > 0)) {
-					secondaryIndexDataStore.storeJoinEntry(
-							altIndexId,
-							dataId,
-							adapter.getAdapterId(),
-							EMPTY_FIELD_ID,
-							primaryIndexId,
-							primaryIndexRowId,
-							EMPTY_VISIBILITY);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -511,57 +406,7 @@ public class AccumuloDataStore extends
 		}
 
 		return null;
-	}
-
-	@Override
-	protected List<ByteArrayId> getAltIndexRowIds(
-			final String tableName,
-			final List<ByteArrayId> dataIds,
-			final ByteArrayId adapterId,
-			final String... authorizations ) {
-
-		final List<ByteArrayId> result = new ArrayList<ByteArrayId>();
-		try {
-			if (accumuloOptions.isUseAltIndex() && accumuloOperations.tableExists(tableName)) {
-				ScannerBase scanner = null;
-				for (final ByteArrayId dataId : dataIds) {
-					try {
-						scanner = accumuloOperations.createScanner(
-								tableName,
-								authorizations);
-
-						((Scanner) scanner).setRange(Range.exact(new Text(
-								dataId.getBytes())));
-
-						scanner.fetchColumnFamily(new Text(
-								adapterId.getBytes()));
-
-						final Iterator<Map.Entry<Key, Value>> iterator = scanner.iterator();
-						while (iterator.hasNext()) {
-							final byte[] cq = iterator.next().getKey().getColumnQualifierData().getBackingArray();
-							result.add(new ByteArrayId(
-									ByteArrayUtils.splitVariableLengthArrays(
-											cq).getRight()));
-						}
-					}
-					catch (final TableNotFoundException e) {
-						LOGGER.warn(
-								"Unable to query table '" + tableName + "'.  Table does not exist.",
-								e);
-					}
-					finally {
-						if (scanner != null) {
-							scanner.close();
-						}
-					}
-				}
-			}
-		}
-		catch (final IOException e) {
-			LOGGER.error("Exception checking for table " + tableName + ": " + e);
-		}
-
-		return result;
+	
 	}
 
 	@Override

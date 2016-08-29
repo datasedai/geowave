@@ -18,16 +18,12 @@ import mil.nga.giat.geowave.core.store.callback.DeleteCallbackList;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.IngestCallbackList;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataAdapter;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataManager;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 
 public class DataStoreCallbackManager
 {
 
 	final private DataStatisticsStore statsStore;
 	private boolean persistStats = true;
-	final private SecondaryIndexDataStore secondaryIndexStore;
 
 	final private boolean captureAdapterStats;
 
@@ -36,10 +32,8 @@ public class DataStoreCallbackManager
 
 	public DataStoreCallbackManager(
 			final DataStatisticsStore statsStore,
-			final SecondaryIndexDataStore secondaryIndexStore,
 			boolean captureAdapterStats ) {
 		this.statsStore = statsStore;
-		this.secondaryIndexStore = secondaryIndexStore;
 		this.captureAdapterStats = captureAdapterStats;
 	}
 
@@ -56,12 +50,6 @@ public class DataStoreCallbackManager
 				callbackList.add(new StatsCompositionTool<T>(
 						statsProvider,
 						statsStore));
-			}
-			if (captureAdapterStats && writableAdapter instanceof SecondaryIndexDataAdapter<?>) {
-				callbackList.add(new SecondaryIndexDataManager<T>(
-						secondaryIndexStore,
-						(SecondaryIndexDataAdapter<T>) writableAdapter,
-						index.getId()));
 			}
 			icache.put(
 					writableAdapter.getAdapterId(),
@@ -90,12 +78,6 @@ public class DataStoreCallbackManager
 				callbackList.add(new StatsCompositionTool<T>(
 						statsProvider,
 						statsStore));
-			}
-			if (captureAdapterStats && writableAdapter instanceof SecondaryIndexDataAdapter<?>) {
-				callbackList.add(new SecondaryIndexDataManager<T>(
-						secondaryIndexStore,
-						(SecondaryIndexDataAdapter<T>) writableAdapter,
-						index.getId()));
 			}
 			dcache.put(
 					writableAdapter.getAdapterId(),

@@ -22,7 +22,6 @@ import org.opengis.referencing.operation.MathTransform;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import mil.nga.giat.geowave.adapter.vector.index.SecondaryIndexManager;
 import mil.nga.giat.geowave.adapter.vector.plugin.GeoWaveGTDataStore;
 import mil.nga.giat.geowave.adapter.vector.plugin.visibility.VisibilityConfiguration;
 import mil.nga.giat.geowave.adapter.vector.stats.StatsConfigurationCollection.SimpleFeatureStatsConfigurationCollection;
@@ -33,7 +32,6 @@ import mil.nga.giat.geowave.adapter.vector.utils.TimeDescriptors;
 import mil.nga.giat.geowave.adapter.vector.utils.TimeDescriptors.TimeDescriptorConfiguration;
 import mil.nga.giat.geowave.core.geotime.store.dimension.Time;
 import mil.nga.giat.geowave.core.index.ByteArrayId;
-import mil.nga.giat.geowave.core.index.PersistenceUtils;
 import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.store.EntryVisibilityHandler;
 import mil.nga.giat.geowave.core.store.adapter.AbstractDataAdapter;
@@ -52,8 +50,6 @@ import mil.nga.giat.geowave.core.store.data.visibility.VisibilityManagement;
 import mil.nga.giat.geowave.core.store.dimension.NumericDimensionField;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataAdapter;
 import mil.nga.giat.geowave.mapreduce.HadoopDataAdapter;
 import mil.nga.giat.geowave.mapreduce.HadoopWritableSerializer;
 
@@ -104,8 +100,7 @@ public class FeatureDataAdapter extends
 		AbstractDataAdapter<SimpleFeature> implements
 		GeotoolsFeatureDataAdapter,
 		StatisticsProvider<SimpleFeature>,
-		HadoopDataAdapter<SimpleFeature, FeatureWritable>,
-		SecondaryIndexDataAdapter<SimpleFeature>
+		HadoopDataAdapter<SimpleFeature, FeatureWritable>
 {
 	private final static Logger LOGGER = Logger.getLogger(FeatureDataAdapter.class);
 
@@ -119,7 +114,6 @@ public class FeatureDataAdapter extends
 	private SimpleFeatureType reprojectedType;
 	private MathTransform transform;
 	private StatsManager statsManager;
-	private SecondaryIndexManager secondaryIndexManager;
 	private TimeDescriptors timeDescriptors = null;
 
 	// should change this anytime the serialized image changes. Stay negative.
@@ -221,10 +215,6 @@ public class FeatureDataAdapter extends
 				persistedType,
 				reprojectedType,
 				transform);
-		secondaryIndexManager = new SecondaryIndexManager(
-				this,
-				persistedType,
-				statsManager);
 	}
 
 	protected List<NativeFieldHandler<SimpleFeature, Object>> typeToFieldHandlers(
@@ -409,11 +399,10 @@ public class FeatureDataAdapter extends
 			namespaceBytes = new byte[0];
 		}
 		final byte[] encodedTypeBytes = StringUtils.stringToBinary(encodedType);
-		final byte[] secondaryIndexBytes = PersistenceUtils.toBinary(secondaryIndexManager);
 		// 21 bytes is the 7 four byte length fields and one byte for the
 		// version
 		final ByteBuffer buf = ByteBuffer.allocate(encodedTypeBytes.length + typeNameBytes.length
-				+ namespaceBytes.length + attrBytes.length + axisBytes.length + secondaryIndexBytes.length + 21);
+				+ namespaceBytes.length + attrBytes.length + axisBytes.length + 21);
 		buf.put(VERSION);
 		buf.putInt(typeNameBytes.length);
 		buf.putInt(namespaceBytes.length);
@@ -425,7 +414,6 @@ public class FeatureDataAdapter extends
 		buf.put(attrBytes);
 		buf.put(axisBytes);
 		buf.put(encodedTypeBytes);
-		buf.put(secondaryIndexBytes);
 
 		return buf.array();
 	}
@@ -466,12 +454,6 @@ public class FeatureDataAdapter extends
 		if (namespace.length() == 0) {
 			namespace = null;
 		}
-
-		// 24 bytes is the 6 four byte length fields and one byte for the
-		// version
-		final byte[] secondaryIndexBytes = new byte[bytes.length - axisBytes.length - typeNameBytes.length
-				- namespaceBytes.length - attrBytes.length - encodedTypeBytes.length - 29];
-		buf.get(secondaryIndexBytes);
 
 		final String encodedType = StringUtils.stringFromBinary(encodedTypeBytes);
 		try {
@@ -515,10 +497,6 @@ public class FeatureDataAdapter extends
 					"Unable to deserialized feature type",
 					e);
 		}
-
-		secondaryIndexManager = PersistenceUtils.fromBinary(
-				secondaryIndexBytes,
-				SecondaryIndexManager.class);
 
 		return null;
 	}
@@ -657,11 +635,6 @@ public class FeatureDataAdapter extends
 			return writable.getFeature();
 		}
 
-	}
-
-	@Override
-	public List<SecondaryIndex<SimpleFeature>> getSupportedSecondaryIndices() {
-		return secondaryIndexManager.getSupportedSecondaryIndices();
 	}
 
 	private transient final BiMap<ByteArrayId, Integer> fieldToPositionMap = HashBiMap.create();

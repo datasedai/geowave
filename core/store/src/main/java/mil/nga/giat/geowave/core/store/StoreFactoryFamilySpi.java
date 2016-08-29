@@ -4,7 +4,6 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 
 public interface StoreFactoryFamilySpi extends
 		GenericFactory
@@ -18,6 +17,4 @@ public interface StoreFactoryFamilySpi extends
 	public GenericStoreFactory<AdapterStore> getAdapterStoreFactory();
 
 	public GenericStoreFactory<AdapterIndexMappingStore> getAdapterIndexMappingStoreFactory();
-
-	public GenericStoreFactory<SecondaryIndexDataStore> getSecondaryIndexDataStore();
 }

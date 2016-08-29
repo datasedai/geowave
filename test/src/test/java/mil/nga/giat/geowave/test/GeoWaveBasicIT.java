@@ -1002,29 +1002,6 @@ public class GeoWaveBasicIT
 		}
 		actualResults.close();
 
-		if (testFeature != null) {
-			final ByteArrayId dataId = new ByteArrayId(
-					testFeature.getID());
-			final ByteArrayId adapterId = new ByteArrayId(
-					testFeature.getFeatureType().getTypeName());
-
-			if (geowaveStore.delete(
-					new QueryOptions(
-							adapterId,
-							index.getId()),
-					new DataIdQuery(
-							adapterId,
-							dataId))) {
-
-				success = !hasAtLeastOne(geowaveStore.query(
-						new QueryOptions(
-								adapterId,
-								index.getId()),
-						new DataIdQuery(
-								adapterId,
-								dataId)));
-			}
-		}
 		Assert.assertTrue(
 				"Unable to delete entry by data ID and adapter ID",
 				success);

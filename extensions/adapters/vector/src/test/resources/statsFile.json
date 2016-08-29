@@ -11,9 +11,6 @@
             }
          }
        },
-       { "@class": "mil.nga.giat.geowave.adapter.vector.index.NumericSecondaryIndexConfiguration",
-         "attributes" : ["pop"]
-       },
        { "@class": "mil.nga.giat.geowave.adapter.vector.plugin.visibility.VisibilityConfiguration",
          "attributeName" : "vis"
        },

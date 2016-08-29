@@ -29,8 +29,6 @@ import mil.nga.giat.geowave.core.store.adapter.exceptions.MismatchedIndexToAdapt
 import mil.nga.giat.geowave.core.store.adapter.statistics.CountDataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
-import mil.nga.giat.geowave.core.store.adapter.statistics.RowRangeDataStatistics;
-import mil.nga.giat.geowave.core.store.adapter.statistics.RowRangeHistogramStatistics;
 import mil.nga.giat.geowave.core.store.data.CommonIndexedPersistenceEncoding;
 import mil.nga.giat.geowave.core.store.data.IndexedPersistenceEncoding;
 import mil.nga.giat.geowave.core.store.data.VisibilityWriter;
@@ -41,9 +39,6 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.Index;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
-import mil.nga.giat.geowave.core.store.memory.MemoryRequiredOptions;
-import mil.nga.giat.geowave.core.store.memory.MemoryStoreFactoryFamily;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.Query;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 
@@ -199,24 +194,7 @@ public class MemoryDataStoreTest
 						26))) {
 			assertFalse(itemIt.hasNext());
 		}
-		try (CloseableIterator<?> itemIt = dataStore.query(
-				new QueryOptions(
-						adapter,
-						index,
-						new String[] {
-							"aaa",
-							"bbb"
-						}),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						adapter.getDataId(new Integer(
-								35))))) {
-			assertTrue(itemIt.hasNext());
-			assertEquals(
-					new Integer(
-							35),
-					itemIt.next());
-		}
+
 
 	}
 
@@ -405,43 +383,8 @@ public class MemoryDataStoreTest
 						26))) {
 			assertFalse(itemIt.hasNext());
 		}
-		try (CloseableIterator<?> itemIt = dataStore.query(
-				new QueryOptions(
-						adapter,
-						index1,
-						new String[] {
-							"aaa",
-							"bbb"
-						}),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						adapter.getDataId(new Integer(
-								35))))) {
-			assertTrue(itemIt.hasNext());
-			assertEquals(
-					new Integer(
-							35),
-					itemIt.next());
-		}
-		try (CloseableIterator<?> itemIt = dataStore.query(
-				new QueryOptions(
-						adapter,
-						index2,
-						new String[] {
-							"aaa",
-							"bbb"
-						}),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						adapter.getDataId(new Integer(
-								35))))) {
-			assertTrue(itemIt.hasNext());
-			assertEquals(
-					new Integer(
-							35),
-					itemIt.next());
-		}
-
+		
+		
 	}
 
 	private boolean checkStats(

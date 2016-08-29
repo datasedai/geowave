@@ -26,9 +26,6 @@ public class AccumuloOptions implements
 	@Parameter(names = "--useLocalityGroups", hidden = true, arity = 1)
 	protected boolean useLocalityGroups = true;
 
-	@Parameter(names = "--useAltIndex", hidden = true, arity = 1)
-	protected boolean useAltIndex = false;
-
 	@Parameter(names = "--enableBlockCache", hidden = true, arity = 1)
 	protected boolean enableBlockCache = true;
 
@@ -75,15 +72,6 @@ public class AccumuloOptions implements
 	public void setUseLocalityGroups(
 			final boolean useLocalityGroups ) {
 		this.useLocalityGroups = useLocalityGroups;
-	}
-
-	public boolean isUseAltIndex() {
-		return useAltIndex;
-	}
-
-	public void setUseAltIndex(
-			final boolean useAltIndex ) {
-		this.useAltIndex = useAltIndex;
 	}
 
 	public boolean isEnableBlockCache() {

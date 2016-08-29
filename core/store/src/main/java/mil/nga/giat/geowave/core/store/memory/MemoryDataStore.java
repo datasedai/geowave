@@ -44,7 +44,6 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.core.store.index.writer.IndexCompositeWriter;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.query.Query;
@@ -60,7 +59,6 @@ public class MemoryDataStore implements
 	private final AdapterStore adapterStore;
 	private final IndexStore indexStore;
 	private final DataStatisticsStore statsStore;
-	private final SecondaryIndexDataStore secondaryIndexDataStore;
 	private final AdapterIndexMappingStore adapterIndexMappingStore;
 
 	public MemoryDataStore() {
@@ -68,7 +66,6 @@ public class MemoryDataStore implements
 		adapterStore = new MemoryAdapterStore();
 		indexStore = new MemoryIndexStore();
 		statsStore = new MemoryDataStatisticsStore();
-		secondaryIndexDataStore = new MemorySecondaryIndexDataStore();
 		adapterIndexMappingStore = new MemoryAdapterIndexMappingStore();
 	}
 
@@ -76,13 +73,11 @@ public class MemoryDataStore implements
 			final AdapterStore adapterStore,
 			final IndexStore indexStore,
 			final DataStatisticsStore statsStore,
-			final SecondaryIndexDataStore secondaryIndexDataStore,
 			final AdapterIndexMappingStore adapterIndexMappingStore ) {
 		super();
 		this.adapterStore = adapterStore;
 		this.indexStore = indexStore;
 		this.statsStore = statsStore;
-		this.secondaryIndexDataStore = secondaryIndexDataStore;
 		this.adapterIndexMappingStore = adapterIndexMappingStore;
 	}
 
@@ -130,7 +125,6 @@ public class MemoryDataStore implements
 			this.customFieldVisibilityWriter = customFieldVisibilityWriter;
 			callbackCache = new DataStoreCallbackManager(
 					statsStore,
-					secondaryIndexDataStore,
 					captureAdapterStats);
 		}
 
@@ -289,7 +283,6 @@ public class MemoryDataStore implements
 
 					final DataStoreCallbackManager callbackManager = new DataStoreCallbackManager(
 							statsStore,
-							secondaryIndexDataStore,
 							firstTimeForAdapter);
 
 					populateResults(

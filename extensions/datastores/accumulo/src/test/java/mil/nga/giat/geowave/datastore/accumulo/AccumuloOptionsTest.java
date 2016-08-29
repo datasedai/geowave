@@ -10,6 +10,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.accumulo.core.client.AccumuloException;
+import org.apache.accumulo.core.client.AccumuloSecurityException;
+import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.core.client.mock.MockInstance;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
+import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import mil.nga.giat.geowave.core.geotime.ingest.SpatialDimensionalityTypeProvider;
 import mil.nga.giat.geowave.core.geotime.store.dimension.GeometryWrapper;
 import mil.nga.giat.geowave.core.index.ByteArrayId;
@@ -29,30 +43,14 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.EverythingQuery;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.core.store.query.RowIdQuery;
-import mil.nga.giat.geowave.datastore.accumulo.index.secondary.AccumuloSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterIndexMappingStore;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterStore;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloDataStatisticsStore;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloIndexStore;
 import mil.nga.giat.geowave.datastore.accumulo.operations.config.AccumuloOptions;
-
-import org.apache.accumulo.core.client.AccumuloException;
-import org.apache.accumulo.core.client.AccumuloSecurityException;
-import org.apache.accumulo.core.client.Connector;
-import org.apache.accumulo.core.client.TableNotFoundException;
-import org.apache.accumulo.core.client.mock.MockInstance;
-import org.apache.accumulo.core.client.security.tokens.PasswordToken;
-import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class AccumuloOptionsTest
 {
@@ -71,8 +69,6 @@ public class AccumuloOptionsTest
 	AccumuloDataStatisticsStore statsStore;
 
 	AccumuloDataStore mockDataStore;
-
-	AccumuloSecondaryIndexDataStore secondaryIndexDataStore;
 
 	@Before
 	public void setUp() {
@@ -101,15 +97,10 @@ public class AccumuloOptionsTest
 		statsStore = new AccumuloDataStatisticsStore(
 				accumuloOperations);
 
-		secondaryIndexDataStore = new AccumuloSecondaryIndexDataStore(
-				accumuloOperations,
-				new AccumuloOptions());
-
 		mockDataStore = new AccumuloDataStore(
 				indexStore,
 				adapterStore,
 				statsStore,
-				secondaryIndexDataStore,
 				new AccumuloAdapterIndexMappingStore(
 						accumuloOperations),
 				accumuloOperations,
@@ -442,9 +433,7 @@ public class AccumuloOptionsTest
 		final PrimaryIndex index = new SpatialDimensionalityTypeProvider().createPrimaryIndex();
 		final WritableDataAdapter<TestGeometry> adapter0 = new TestGeometryAdapter();
 		final WritableDataAdapter<TestGeometry> adapter1 = new AnotherAdapter();
-
-		accumuloOptions.setUseAltIndex(true);
-
+		
 		try (IndexWriter<TestGeometry> indexWriter = mockDataStore.createWriter(
 				adapter0,
 				index)) {
@@ -577,15 +566,6 @@ public class AccumuloOptionsTest
 				3,
 				count);
 
-		assertTrue(mockDataStore.delete(
-				new QueryOptions(
-						adapter1,
-						index),
-				new DataIdQuery(
-						adapter1.getAdapterId(),
-						new ByteArrayId(
-								"test_pt_1"))));
-
 		it = mockDataStore.query(
 				new QueryOptions(
 						adapter1,
@@ -597,7 +577,7 @@ public class AccumuloOptionsTest
 			count++;
 		}
 		assertEquals(
-				1,
+				2,
 				count);
 
 		it = mockDataStore.query(
@@ -609,7 +589,7 @@ public class AccumuloOptionsTest
 			count++;
 		}
 		assertEquals(
-				2,
+				3,
 				count);
 
 		assertTrue(mockDataStore.delete(

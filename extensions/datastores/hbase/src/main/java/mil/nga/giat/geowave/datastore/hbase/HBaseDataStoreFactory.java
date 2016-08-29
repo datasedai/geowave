@@ -2,7 +2,6 @@ package mil.nga.giat.geowave.datastore.hbase;
 
 import mil.nga.giat.geowave.core.store.DataStore;
 import mil.nga.giat.geowave.core.store.StoreFactoryOptions;
-import mil.nga.giat.geowave.datastore.hbase.index.secondary.HBaseSecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseAdapterIndexMappingStore;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseAdapterStore;
 import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseDataStatisticsStore;
@@ -35,8 +34,6 @@ public class HBaseDataStoreFactory extends
 				new HBaseDataStatisticsStore(
 						hbaseOperations),
 				new HBaseAdapterIndexMappingStore(
-						hbaseOperations),
-				new HBaseSecondaryIndexDataStore(
 						hbaseOperations),
 				hbaseOperations,
 				opts.getAdditionalOptions());

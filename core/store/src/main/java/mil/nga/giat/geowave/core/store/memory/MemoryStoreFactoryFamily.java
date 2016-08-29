@@ -7,7 +7,6 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
 
 public class MemoryStoreFactoryFamily extends
 		AbstractMemoryFactory implements
@@ -32,11 +31,6 @@ public class MemoryStoreFactoryFamily extends
 	@Override
 	public GenericStoreFactory<AdapterStore> getAdapterStoreFactory() {
 		return new MemoryAdapterStoreFactory();
-	}
-
-	@Override
-	public GenericStoreFactory<SecondaryIndexDataStore> getSecondaryIndexDataStore() {
-		return new MemorySecondaryIndexStoreFactory();
 	}
 
 	@Override
