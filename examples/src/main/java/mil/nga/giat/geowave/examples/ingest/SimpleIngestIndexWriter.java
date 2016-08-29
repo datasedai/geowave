@@ -9,7 +9,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import mil.nga.giat.geowave.adapter.vector.GeotoolsFeatureDataAdapter;
 import mil.nga.giat.geowave.core.store.DataStore;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.datastore.accumulo.BasicAccumuloOperations;
 

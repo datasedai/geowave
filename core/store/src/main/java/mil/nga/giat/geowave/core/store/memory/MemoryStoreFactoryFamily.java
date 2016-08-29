@@ -7,7 +7,7 @@ import mil.nga.giat.geowave.core.store.adapter.AdapterIndexMappingStore;
 import mil.nga.giat.geowave.core.store.adapter.AdapterStore;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 
 public class MemoryStoreFactoryFamily extends
 		AbstractMemoryFactory implements

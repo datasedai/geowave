@@ -1,7 +1,7 @@
 package mil.nga.giat.geowave.datastore.hbase.index.secondary;
 
 import mil.nga.giat.geowave.core.store.StoreFactoryOptions;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 import mil.nga.giat.geowave.datastore.hbase.AbstractHBaseStoreFactory;
 import mil.nga.giat.geowave.datastore.hbase.operations.config.HBaseOptions;
 import mil.nga.giat.geowave.datastore.hbase.operations.config.HBaseRequiredOptions;

@@ -29,7 +29,7 @@ import mil.nga.giat.geowave.core.ingest.hdfs.mapreduce.IngestWithReducer;
 import mil.nga.giat.geowave.core.store.CloseableIterator;
 import mil.nga.giat.geowave.core.store.CloseableIterator.Wrapper;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 /**
  * This plugin is used for ingesting any GPX formatted data from a local file

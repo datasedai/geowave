@@ -1,4 +1,4 @@
-package mil.nga.giat.geowave.core.store.index;
+package mil.nga.giat.geowave.core.store.index.secondary;
 
 import java.util.List;
 

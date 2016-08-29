@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexType;
 
 public class TextSecondaryIndexConfiguration extends
 		AbstractSecondaryIndexConfiguration<String>

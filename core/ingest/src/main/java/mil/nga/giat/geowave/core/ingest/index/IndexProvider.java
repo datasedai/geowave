@@ -1,6 +1,6 @@
 package mil.nga.giat.geowave.core.ingest.index;
 
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 public interface IndexProvider
 {

@@ -15,7 +15,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 
 import mil.nga.giat.geowave.core.store.adapter.statistics.RowRangeHistogramStatistics;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 public class IntermediateSplitInfo implements
 		Comparable<IntermediateSplitInfo>

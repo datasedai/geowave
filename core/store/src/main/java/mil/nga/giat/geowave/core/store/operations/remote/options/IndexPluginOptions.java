@@ -14,7 +14,7 @@ import mil.nga.giat.geowave.core.index.CompoundIndexStrategy;
 import mil.nga.giat.geowave.core.index.simple.HashKeyIndexStrategy;
 import mil.nga.giat.geowave.core.index.simple.RoundRobinKeyIndexStrategy;
 import mil.nga.giat.geowave.core.store.index.CustomIdIndex;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.spi.DimensionalityTypeOptions;
 import mil.nga.giat.geowave.core.store.spi.DimensionalityTypeProviderSpi;
 import mil.nga.giat.geowave.core.store.spi.DimensionalityTypeRegistry;

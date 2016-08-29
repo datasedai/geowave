@@ -14,6 +14,8 @@ import mil.nga.giat.geowave.core.store.base.Writer;
 import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo.FieldInfo;
 import mil.nga.giat.geowave.core.store.filter.DistributableFilterList;
 import mil.nga.giat.geowave.core.store.filter.DistributableQueryFilter;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 
 public abstract class BaseSecondaryIndexDataStore<MutationType> implements
 		SecondaryIndexDataStore,

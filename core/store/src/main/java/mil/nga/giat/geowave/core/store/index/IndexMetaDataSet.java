@@ -15,6 +15,7 @@ import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo;
 import mil.nga.giat.geowave.core.store.callback.DeleteCallback;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 public class IndexMetaDataSet<T> extends
 		AbstractDataStatistics<T> implements

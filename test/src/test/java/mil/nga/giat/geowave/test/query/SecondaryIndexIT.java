@@ -31,9 +31,9 @@ import mil.nga.giat.geowave.adapter.vector.utils.SimpleFeatureUserDataConfigurat
 import mil.nga.giat.geowave.core.geotime.GeometryUtils;
 import mil.nga.giat.geowave.core.store.DataStore;
 import mil.nga.giat.geowave.core.store.adapter.exceptions.MismatchedIndexToAdapterMapping;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexType;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.operations.remote.options.DataStorePluginOptions;
 import mil.nga.giat.geowave.test.GeoWaveITRunner;

@@ -27,7 +27,7 @@ import mil.nga.giat.geowave.core.store.adapter.exceptions.MismatchedIndexToAdapt
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.Index;
 import mil.nga.giat.geowave.core.store.index.IndexStore;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 public class QueryOptionsTest
 {

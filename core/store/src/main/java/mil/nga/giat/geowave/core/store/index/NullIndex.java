@@ -4,6 +4,7 @@ import mil.nga.giat.geowave.core.index.ByteArrayId;
 import mil.nga.giat.geowave.core.index.NullNumericIndexStrategy;
 import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.store.dimension.NumericDimensionField;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 /**
  * This can be used as a pass-through for an index. In other words, it

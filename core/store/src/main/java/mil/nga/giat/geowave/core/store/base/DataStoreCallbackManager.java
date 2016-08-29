@@ -17,10 +17,10 @@ import mil.nga.giat.geowave.core.store.callback.DeleteCallback;
 import mil.nga.giat.geowave.core.store.callback.DeleteCallbackList;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.callback.IngestCallbackList;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataAdapter;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataManager;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataAdapter;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataManager;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 
 public class DataStoreCallbackManager
 {

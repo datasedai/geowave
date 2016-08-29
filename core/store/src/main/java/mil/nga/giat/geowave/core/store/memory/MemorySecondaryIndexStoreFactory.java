@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mil.nga.giat.geowave.core.store.StoreFactoryOptions;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 
 public class MemorySecondaryIndexStoreFactory extends
 		AbstractMemoryStoreFactory<SecondaryIndexDataStore>

@@ -45,7 +45,7 @@ import mil.nga.giat.geowave.core.store.adapter.IndexFieldHandler;
 import mil.nga.giat.geowave.core.store.data.PersistentValue;
 import mil.nga.giat.geowave.core.store.data.visibility.GlobalVisibilityHandler;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexType;
 
 public class FeatureDataAdapterTest
 {

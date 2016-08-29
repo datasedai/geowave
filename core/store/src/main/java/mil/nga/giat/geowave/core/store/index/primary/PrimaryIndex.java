@@ -1,4 +1,4 @@
-package mil.nga.giat.geowave.core.store.index;
+package mil.nga.giat.geowave.core.store.index.primary;
 
 import java.nio.ByteBuffer;
 
@@ -7,6 +7,8 @@ import mil.nga.giat.geowave.core.index.NumericIndexStrategy;
 import mil.nga.giat.geowave.core.index.PersistenceUtils;
 import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.index.sfc.data.MultiDimensionalNumericData;
+import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
+import mil.nga.giat.geowave.core.store.index.Index;
 
 /**
  * This class fully describes everything necessary to index data within GeoWave.

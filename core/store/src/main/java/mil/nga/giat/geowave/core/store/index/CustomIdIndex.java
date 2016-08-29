@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import mil.nga.giat.geowave.core.index.ByteArrayId;
 import mil.nga.giat.geowave.core.index.NumericIndexStrategy;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 public class CustomIdIndex extends
 		PrimaryIndex

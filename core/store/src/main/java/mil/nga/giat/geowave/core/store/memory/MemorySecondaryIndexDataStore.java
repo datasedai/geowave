@@ -6,8 +6,8 @@ import mil.nga.giat.geowave.core.index.ByteArrayId;
 import mil.nga.giat.geowave.core.index.ByteArrayRange;
 import mil.nga.giat.geowave.core.store.CloseableIterator;
 import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo.FieldInfo;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataStore;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataStore;
 
 public class MemorySecondaryIndexDataStore implements
 		SecondaryIndexDataStore

@@ -8,7 +8,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 
 import com.google.common.collect.Sets;
 
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexType;
 
 public abstract class AbstractSecondaryIndexConfiguration<T> implements
 		SimpleFeatureSecondaryIndexConfiguration

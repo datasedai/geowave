@@ -30,7 +30,7 @@ import mil.nga.giat.geowave.core.store.base.Writer;
 import mil.nga.giat.geowave.core.store.filter.DistributableFilterList;
 import mil.nga.giat.geowave.core.store.filter.DistributableQueryFilter;
 import mil.nga.giat.geowave.core.store.index.BaseSecondaryIndexDataStore;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndex;
 import mil.nga.giat.geowave.datastore.accumulo.AccumuloOperations;
 import mil.nga.giat.geowave.datastore.accumulo.operations.config.AccumuloOptions;
 import mil.nga.giat.geowave.datastore.accumulo.query.SecondaryIndexQueryFilterIterator;

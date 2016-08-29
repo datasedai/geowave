@@ -52,8 +52,8 @@ import mil.nga.giat.geowave.core.store.data.visibility.VisibilityManagement;
 import mil.nga.giat.geowave.core.store.dimension.NumericDimensionField;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexDataAdapter;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexDataAdapter;
 import mil.nga.giat.geowave.mapreduce.HadoopDataAdapter;
 import mil.nga.giat.geowave.mapreduce.HadoopWritableSerializer;
 

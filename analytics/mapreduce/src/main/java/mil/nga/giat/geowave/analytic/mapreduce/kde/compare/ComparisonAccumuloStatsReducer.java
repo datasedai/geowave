@@ -11,7 +11,7 @@ import mil.nga.giat.geowave.adapter.raster.RasterUtils;
 import mil.nga.giat.geowave.analytic.mapreduce.kde.KDEJobRunner;
 import mil.nga.giat.geowave.core.geotime.ingest.SpatialDimensionalityTypeProvider;
 import mil.nga.giat.geowave.core.index.ByteArrayId;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 import mil.nga.giat.geowave.mapreduce.JobContextIndexStore;
 import mil.nga.giat.geowave.mapreduce.output.GeoWaveOutputKey;
 

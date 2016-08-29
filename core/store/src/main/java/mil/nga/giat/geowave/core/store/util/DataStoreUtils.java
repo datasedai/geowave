@@ -46,7 +46,7 @@ import mil.nga.giat.geowave.core.store.flatten.FlattenedFieldInfo;
 import mil.nga.giat.geowave.core.store.flatten.FlattenedUnreadDataSingleRow;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 /*
  */

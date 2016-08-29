@@ -16,7 +16,7 @@ import mil.nga.giat.geowave.core.store.base.DataStoreEntryInfo;
 import mil.nga.giat.geowave.core.store.callback.IngestCallback;
 import mil.nga.giat.geowave.core.store.data.VisibilityWriter;
 import mil.nga.giat.geowave.core.store.index.DataStoreIndexWriter;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 import mil.nga.giat.geowave.datastore.accumulo.operations.config.AccumuloOptions;
 import mil.nga.giat.geowave.datastore.accumulo.util.AccumuloUtils;
 

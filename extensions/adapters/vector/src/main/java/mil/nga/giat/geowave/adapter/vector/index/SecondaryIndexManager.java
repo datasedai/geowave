@@ -14,9 +14,9 @@ import mil.nga.giat.geowave.core.index.PersistenceUtils;
 import mil.nga.giat.geowave.core.store.adapter.DataAdapter;
 import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatistics;
 import mil.nga.giat.geowave.core.store.adapter.statistics.FieldIdStatisticVisibility;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndex;
-import mil.nga.giat.geowave.core.store.index.SecondaryIndexType;
 import mil.nga.giat.geowave.core.store.index.numeric.NumericIndexStrategy;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndex;
+import mil.nga.giat.geowave.core.store.index.secondary.SecondaryIndexType;
 import mil.nga.giat.geowave.core.store.index.temporal.TemporalIndexStrategy;
 import mil.nga.giat.geowave.core.store.index.text.TextIndexStrategy;
 

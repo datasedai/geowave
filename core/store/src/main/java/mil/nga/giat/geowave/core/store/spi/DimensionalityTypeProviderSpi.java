@@ -1,7 +1,7 @@
 package mil.nga.giat.geowave.core.store.spi;
 
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
+import mil.nga.giat.geowave.core.store.index.primary.PrimaryIndex;
 
 /**
  * This interface can be injected using SPI to determine which supported index
