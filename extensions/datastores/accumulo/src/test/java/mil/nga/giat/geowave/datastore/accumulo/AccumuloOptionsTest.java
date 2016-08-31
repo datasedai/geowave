@@ -43,7 +43,6 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.EverythingQuery;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.core.store.query.RowIdQuery;
@@ -434,9 +433,7 @@ public class AccumuloOptionsTest
 		final PrimaryIndex index = new SpatialDimensionalityTypeProvider().createPrimaryIndex();
 		final WritableDataAdapter<TestGeometry> adapter0 = new TestGeometryAdapter();
 		final WritableDataAdapter<TestGeometry> adapter1 = new AnotherAdapter();
-
-		accumuloOptions.setUseAltIndex(true);
-
+		
 		try (IndexWriter<TestGeometry> indexWriter = mockDataStore.createWriter(
 				adapter0,
 				index)) {
@@ -569,15 +566,6 @@ public class AccumuloOptionsTest
 				3,
 				count);
 
-		assertTrue(mockDataStore.delete(
-				new QueryOptions(
-						adapter1,
-						index),
-				new DataIdQuery(
-						adapter1.getAdapterId(),
-						new ByteArrayId(
-								"test_pt_1"))));
-
 		it = mockDataStore.query(
 				new QueryOptions(
 						adapter1,
@@ -589,7 +577,7 @@ public class AccumuloOptionsTest
 			count++;
 		}
 		assertEquals(
-				1,
+				2,
 				count);
 
 		it = mockDataStore.query(
@@ -601,7 +589,7 @@ public class AccumuloOptionsTest
 			count++;
 		}
 		assertEquals(
-				2,
+				3,
 				count);
 
 		assertTrue(mockDataStore.delete(

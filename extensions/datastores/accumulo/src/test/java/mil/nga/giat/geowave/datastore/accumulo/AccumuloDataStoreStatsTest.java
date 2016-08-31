@@ -1,7 +1,6 @@
 package mil.nga.giat.geowave.datastore.accumulo;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -29,7 +28,6 @@ import mil.nga.giat.geowave.core.geotime.store.dimension.GeometryWrapper;
 import mil.nga.giat.geowave.core.geotime.store.query.SpatialQuery;
 import mil.nga.giat.geowave.core.geotime.store.statistics.BoundingBoxDataStatistics;
 import mil.nga.giat.geowave.core.index.ByteArrayId;
-import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.store.CloseableIterator;
 import mil.nga.giat.geowave.core.store.EntryVisibilityHandler;
 import mil.nga.giat.geowave.core.store.adapter.AbstractDataAdapter;
@@ -55,7 +53,6 @@ import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.EverythingQuery;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloAdapterIndexMappingStore;
@@ -161,16 +158,6 @@ public class AccumuloDataStoreStatsTest
 	public void testWithOutAltIndex()
 			throws IOException {
 		accumuloOptions.setCreateTable(true);
-		accumuloOptions.setUseAltIndex(false);
-		accumuloOptions.setPersistDataStatistics(true);
-		runtest();
-	}
-
-	@Test
-	public void testWithAltIndex()
-			throws IOException {
-		accumuloOptions.setCreateTable(true);
-		accumuloOptions.setUseAltIndex(true);
 		accumuloOptions.setPersistDataStatistics(true);
 		runtest();
 	}
@@ -302,28 +289,27 @@ public class AccumuloDataStoreStatsTest
 
 		final AtomicBoolean found = new AtomicBoolean(
 				false);
-		mockDataStore.delete(
+		
+		try (CloseableIterator<?> it1 = mockDataStore.query(
 				new QueryOptions(
 						adapter,
 						index,
 						-1,
-						new ScanCallback<TestGeometry>() {
-
-							@Override
-							public void entryScanned(
-									final DataStoreEntryInfo entryInfo,
-									final TestGeometry entry ) {
-								found.getAndSet(true);
-							}
-						},
+						null,
 						new String[] {
-							"aaa"
+							"aaa",
+							"bbb"
 						}),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						new ByteArrayId(
-								"test_pt_2".getBytes(StringUtils.GEOWAVE_CHAR_SET))));
-		assertFalse(found.get());
+				query)) {
+			int count = 0;
+			while (it1.hasNext()) {
+				it1.next();
+				count++;
+			}
+			assertEquals(
+					3,
+					count);
+		}
 
 		try (CloseableIterator<?> it1 = mockDataStore.query(
 				new QueryOptions(
@@ -346,47 +332,12 @@ public class AccumuloDataStoreStatsTest
 					count);
 		}
 
-		mockDataStore.delete(
-				new QueryOptions(
-						adapter,
-						index,
-						-1,
-						null,
-						new String[] {
-							"aaa"
-						}),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						new ByteArrayId(
-								"test_pt".getBytes(StringUtils.GEOWAVE_CHAR_SET))));
-
-		try (CloseableIterator<?> it1 = mockDataStore.query(
-				new QueryOptions(
-						adapter,
-						index,
-						-1,
-						null,
-						new String[] {
-							"aaa",
-							"bbb"
-						}),
-				query)) {
-			int count = 0;
-			while (it1.hasNext()) {
-				it1.next();
-				count++;
-			}
-			assertEquals(
-					2,
-					count);
-		}
-
 		countStats = (CountDataStatistics<?>) statsStore.getDataStatistics(
 				adapter.getAdapterId(),
 				CountDataStatistics.STATS_ID,
 				"aaa");
 		assertEquals(
-				1,
+				2,
 				countStats.getCount());
 
 		countStats = (CountDataStatistics<?>) statsStore.getDataStatistics(

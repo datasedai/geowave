@@ -34,10 +34,8 @@ import mil.nga.giat.geowave.core.store.adapter.statistics.DataStatisticsStore;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.QueryOptions;
 import mil.nga.giat.geowave.core.store.query.RowIdQuery;
-import mil.nga.giat.geowave.datastore.accumulo.AccumuloDataStoreStatsTest.TestGeometry;
 import mil.nga.giat.geowave.datastore.accumulo.AccumuloDataStoreStatsTest.TestGeometryAdapter;
 import mil.nga.giat.geowave.datastore.accumulo.metadata.AccumuloDataStatisticsStore;
 import mil.nga.giat.geowave.datastore.accumulo.operations.config.AccumuloOptions;
@@ -151,41 +149,6 @@ public class DeleteWriterTest
 	}
 
 	@Test
-	public void testDeleteByDataId() {
-		CountDataStatistics countStats = (CountDataStatistics) statsStore.getDataStatistics(
-				adapter.getAdapterId(),
-				CountDataStatistics.STATS_ID);
-		assertEquals(
-				2,
-				countStats.getCount());
-		assertTrue(rowId1s.size() > 1);
-		final CloseableIterator it1 = mockDataStore.query(
-				new QueryOptions(),
-				new RowIdQuery(
-						rowId1s));
-		assertTrue(it1.hasNext());
-		assertTrue(mockDataStore.delete(
-				new QueryOptions(
-						adapter,
-						index),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						new ByteArrayId(
-								"test_pt_1"))));
-		final CloseableIterator it2 = mockDataStore.query(
-				new QueryOptions(),
-				new RowIdQuery(
-						rowId1s));
-		assertTrue(!it2.hasNext());
-		countStats = (CountDataStatistics) statsStore.getDataStatistics(
-				adapter.getAdapterId(),
-				CountDataStatistics.STATS_ID);
-		assertEquals(
-				1,
-				countStats.getCount());
-	}
-
-	@Test
 	public void testDeleteByRowId() {
 		CountDataStatistics countStats = (CountDataStatistics) statsStore.getDataStatistics(
 				adapter.getAdapterId(),
@@ -196,16 +159,6 @@ public class DeleteWriterTest
 		assertEquals(
 				18,
 				rowId2s.size());
-		final CloseableIterator it1 = mockDataStore.query(
-				new QueryOptions(),
-				new DataIdQuery(
-						adapter.getAdapterId(),
-						new ByteArrayId(
-								"test_pt_2")));
-		assertTrue(it1.hasNext());
-		assertTrue(adapter.getDataId(
-				(TestGeometry) it1.next()).getString().equals(
-				"test_pt_2"));
 		assertTrue(mockDataStore.delete(
 				new QueryOptions(
 						adapter,

@@ -39,7 +39,6 @@ import mil.nga.giat.geowave.core.store.index.writer.IndependentAdapterIndexWrite
 import mil.nga.giat.geowave.core.store.index.writer.IndexCompositeWriter;
 import mil.nga.giat.geowave.core.store.index.writer.IndexWriter;
 import mil.nga.giat.geowave.core.store.memory.MemoryAdapterStore;
-import mil.nga.giat.geowave.core.store.query.DataIdQuery;
 import mil.nga.giat.geowave.core.store.query.EverythingQuery;
 import mil.nga.giat.geowave.core.store.query.PrefixIdQuery;
 import mil.nga.giat.geowave.core.store.query.Query;
@@ -187,21 +186,6 @@ public abstract class BaseDataStore
 								filter,
 								sanitizedQueryOptions,
 								tempAdapterStore));
-						continue;
-					}
-					else if (sanitizedQuery instanceof DataIdQuery) {
-						final DataIdQuery idQuery = (DataIdQuery) sanitizedQuery;
-						if (idQuery.getAdapterId().equals(
-								adapter.getAdapterId())) {
-							results.add(getEntries(
-									indexAdapterPair.getLeft(),
-									idQuery.getDataIds(),
-									(DataAdapter<Object>) adapterStore.getAdapter(idQuery.getAdapterId()),
-									filter,
-									(ScanCallback<Object>) sanitizedQueryOptions.getScanCallback(),
-									sanitizedQueryOptions.getAuthorizations(),
-									sanitizedQueryOptions.getMaxResolutionSubsamplingPerDimension()));
-						}
 						continue;
 					}
 					else if (sanitizedQuery instanceof PrefixIdQuery) {
@@ -378,17 +362,6 @@ public abstract class BaseDataStore
 								null,
 								queryOptions,
 								adapterStore);
-					}
-					else if (query instanceof DataIdQuery) {
-						final DataIdQuery idQuery = (DataIdQuery) query;
-						dataIt = getEntries(
-								index,
-								idQuery.getDataIds(),
-								adapter,
-								null,
-								callback,
-								queryOptions.getAuthorizations(),
-								null);
 					}
 					else if (query instanceof PrefixIdQuery) {
 						dataIt = queryRowPrefix(

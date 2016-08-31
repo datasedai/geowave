@@ -82,7 +82,6 @@ public class SimpleIngestTest
 				accumuloOptions);
 
 		accumuloOptions.setCreateTable(true);
-		accumuloOptions.setUseAltIndex(true);
 		accumuloOptions.setPersistDataStatistics(true);
 	}
 

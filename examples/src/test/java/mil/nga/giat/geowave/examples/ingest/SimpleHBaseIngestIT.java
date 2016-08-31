@@ -33,9 +33,9 @@ import mil.nga.giat.geowave.datastore.hbase.metadata.HBaseIndexStore;
 import mil.nga.giat.geowave.datastore.hbase.operations.BasicHBaseOperations;
 import mil.nga.giat.geowave.datastore.hbase.operations.config.HBaseOptions;
 
-public class SimpleHBaseIngestTest
+public class SimpleHBaseIngestIT
 {
-	private final static Logger LOGGER = Logger.getLogger(SimpleHBaseIngestTest.class);
+	private final static Logger LOGGER = Logger.getLogger(SimpleHBaseIngestIT.class);
 
 	private final static HBaseOptions hbaseOptions = new HBaseOptions();
 	private static HBaseIndexStore indexStore;
@@ -154,7 +154,6 @@ public class SimpleHBaseIngestTest
 				hbaseOptions);
 
 		hbaseOptions.setCreateTable(true);
-		hbaseOptions.setUseAltIndex(true);
 		hbaseOptions.setPersistDataStatistics(true);
 	}
 
