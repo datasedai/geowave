@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import com.google.common.math.DoubleMath;
 
-import mil.nga.giat.geowave.core.index.ByteArrayId;
 import mil.nga.giat.geowave.core.index.NumericIndexStrategy;
 import mil.nga.giat.geowave.core.index.StringUtils;
 import mil.nga.giat.geowave.core.index.dimension.NumericDimensionDefinition;
@@ -30,7 +29,6 @@ import mil.nga.giat.geowave.core.store.filter.DistributableQueryFilter;
 import mil.nga.giat.geowave.core.store.filter.QueryFilter;
 import mil.nga.giat.geowave.core.store.index.CommonIndexModel;
 import mil.nga.giat.geowave.core.store.index.CommonIndexValue;
-import mil.nga.giat.geowave.core.store.index.FilterableConstraints;
 import mil.nga.giat.geowave.core.store.index.Index;
 import mil.nga.giat.geowave.core.store.index.PrimaryIndex;
 
@@ -591,22 +589,13 @@ public class BasicQuery implements
 	}
 
 	private Constraints constraints;
-	// field Id to constraint
-	private Map<ByteArrayId, FilterableConstraints> additionalConstraints = Collections.emptyMap();
 
 	protected BasicQuery() {}
 
 	public BasicQuery(
-			final Constraints constraints ) {
-		this.constraints = constraints;
-	}
-
-	public BasicQuery(
-			final Constraints constraints,
-			final Map<ByteArrayId, FilterableConstraints> additionalConstraints ) {
+			final Constraints constraints) {
 		super();
 		this.constraints = constraints;
-		this.additionalConstraints = additionalConstraints;
 	}
 
 	@Override
