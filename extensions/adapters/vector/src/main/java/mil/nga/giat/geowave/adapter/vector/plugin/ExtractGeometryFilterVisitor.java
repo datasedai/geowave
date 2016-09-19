@@ -1,6 +1,6 @@
 package mil.nga.giat.geowave.adapter.vector.plugin;
 
-import mil.nga.giat.geowave.core.geotime.GeometryUtils;
+import mil.nga.giat.geowave.core.geotime.store.query.SpatialConstraints;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
@@ -149,11 +149,7 @@ public class ExtractGeometryFilterVisitor extends
 	public Object visit(
 			final IncludeFilter filter,
 			final Object data ) {
-		return infinity();
-	}
-
-	private Geometry infinity() {
-		return GeometryUtils.infinity();
+		return new SpatialConstraints();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -206,7 +202,7 @@ public class ExtractGeometryFilterVisitor extends
 	public Object visit(
 			final And filter,
 			final Object data ) {
-		Geometry mixed = infinity();
+		Geometry mixed = new SpatialConstraints();
 		for (final Filter f : filter.getChildren()) {
 			final Object obj = f.accept(
 					this,
@@ -238,7 +234,7 @@ public class ExtractGeometryFilterVisitor extends
 		// result
 		// of !(finite envelope)
 
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
@@ -256,7 +252,7 @@ public class ExtractGeometryFilterVisitor extends
 			}
 		}
 		if (mixed.isEmpty()) {
-			return infinity();
+			return new SpatialConstraints();
 		}
 		return mixed;
 	}
@@ -266,7 +262,7 @@ public class ExtractGeometryFilterVisitor extends
 			final Beyond filter,
 			final Object data ) {
 		// beyond a certain distance from a finite object, no way to limit it
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
@@ -301,7 +297,7 @@ public class ExtractGeometryFilterVisitor extends
 			final Object data ) {
 		// disjoint does not define a rectangle, but a hole in the
 		// Cartesian plane, no way to limit it
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
@@ -323,14 +319,14 @@ public class ExtractGeometryFilterVisitor extends
 
 		// we cannot desume a bbox from this filter
 		if (geometry == null) {
-			return infinity();
+			return new SpatialConstraints();
 		}
 
 		Geometry geom = geometry.evaluate(
 				null,
 				Geometry.class);
 		if (geom == null) {
-			return infinity();
+			return new SpatialConstraints();
 		}
 		Pair<Geometry, Double> geometryAndDegrees;
 		try {
@@ -431,105 +427,105 @@ public class ExtractGeometryFilterVisitor extends
 	public Object visit(
 			final Add expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final Divide expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final Function expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final Id filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final Multiply expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final NilExpression expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsBetween filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsEqualTo filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsGreaterThan filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsGreaterThanOrEqualTo filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsLessThan filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsLessThanOrEqualTo filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsLike filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsNotEqualTo filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visit(
 			final PropertyIsNull filter,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
@@ -543,13 +539,13 @@ public class ExtractGeometryFilterVisitor extends
 	public Object visit(
 			final Subtract expression,
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 	@Override
 	public Object visitNullFilter(
 			final Object data ) {
-		return infinity();
+		return new SpatialConstraints();
 	}
 
 }
