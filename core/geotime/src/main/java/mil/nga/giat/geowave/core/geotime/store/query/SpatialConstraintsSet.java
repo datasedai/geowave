@@ -55,15 +55,34 @@ public class SpatialConstraintsSet {
 		return constraintsSet.entrySet();
 	}
 
-	public boolean isEmpty() {
+	public boolean isInfinite() {
 
 		if (constraintsSet.isEmpty()) {
 			return true;
 		}
-		boolean isEmpty = true;
+		boolean isInfinite = true;
 		for (final Entry<String, SpatialConstraints> entry : getSet()) {
-			isEmpty &= entry.getValue().isEmpty();
+			isInfinite &= entry.getValue().isInfinite();
 		}
-		return isEmpty;
+		return isInfinite;
+	}
+	
+	public void intersectWith(
+			final SpatialConstraintsSet sideR ) {
+
+		for (final Map.Entry<String, SpatialConstraints> entry : sideR.getSet()) {
+			getConstraintsFor(
+					entry.getKey()).replaceWithIntersections(
+					entry.getValue());
+		}
+	}
+
+	public void mergeWith(
+			final SpatialConstraintsSet sideR ) {
+		for (final Map.Entry<String, SpatialConstraints> entry : sideR.getSet()) {
+			getConstraintsFor(
+					entry.getKey()).replaceWithMerged(
+					entry.getValue());
+		}
 	}
 }
