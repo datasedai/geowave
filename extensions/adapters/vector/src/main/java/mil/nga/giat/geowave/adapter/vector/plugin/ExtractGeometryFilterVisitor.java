@@ -76,30 +76,28 @@ public class ExtractGeometryFilterVisitor extends
 			final CoordinateReferenceSystem crs ) {
 		this.crs = crs;
 	}
-
-	/**
-	 * 
-	 * @param filter
-	 * @param crs
-	 * @return null if empty constraint (infinite not supported)
-	 */
-	public static Geometry getConstraints(
-			final Filter filter,
+	
+	public static SpatialConstraintsSet getConstraints(final Filter filter,
 			CoordinateReferenceSystem crs ) {
-		final Geometry geo = (Geometry) filter.accept(
+		final Object output = filter.accept(
 				new ExtractGeometryFilterVisitor(
 						crs),
 				null);
-		if ((geo == null) || geo.isEmpty()) {
-			return null;
-		}
-		final double area = geo.getArea();
-		if (Double.isInfinite(area) || Double.isNaN(area)) {
-			return null;
-		}
-		return geo;
 
-	}
+		if (output instanceof SpatialConstraintsSet) {
+			return (SpatialConstraintsSet) output;
+		}
+		else if (output instanceof SpatialConstraints) {
+			final SpatialConstraints paramConstraint = (SpatialConstraints) output;
+			final SpatialConstraintsSet constraintSet = new SpatialConstraintsSet();
+			constraintSet.getConstraintsFor(
+					paramConstraint.getName()).replaceWithMerged(
+					paramConstraint);
+			return constraintSet;
+		}
+		return new SpatialConstraintsSet();
+	}	
+	
 
 	/**
 	 * Produce an ReferencedEnvelope from the provided data parameter.

@@ -1,6 +1,7 @@
 package mil.nga.giat.geowave.adapter.vector.plugin;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -173,4 +174,22 @@ public class ExtractGeometryFilterVisitorTest
 		}
 	}
 
+	@Test
+	public void testGetConstraints() throws CQLException {
+		Filter filter = CQL.toFilter("BBOX(geom2,-90, 40, -60, 45) AND BBOX(geom1,-85, 40, -60, 45)");
+		
+		SpatialConstraintsSet set = 
+				ExtractGeometryFilterVisitor.getConstraints(filter, GeoWaveGTDataStore.DEFAULT_CRS);
+		
+		assertFalse(set.isInfinite());
+		assertEquals(2, set.getSet().size());
+
+		SpatialConstraints geometry = set.getConstraintsFor("geom2");
+		
+		assertNotNull(geometry);
+		assertEquals("geom2", geometry.getName());	
+		assertTrue(geometry.getGeometry() instanceof Polygon);
+		Coordinate[] coords = geometry.getGeometry().getCoordinates();
+		assertEquals(-90, coords[0].getOrdinate(0), 0.0001);
+	}
 }
